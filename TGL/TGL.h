@@ -57,7 +57,7 @@ enum tTGLTextAlign {
 
 class TGLLabel : public TGLScreenElement {
   public:
-    TGLLabel(int16_t x, int16_t y, int16_t w, int16_t h, String label, int8_t size = 1, tTGLTextAlign align = ALIGN_CENTER, uint16_t color = COLOR_TEXT) : TGLScreenElement(x, y, w, h) {
+    TGLLabel(int16_t x, int16_t y, int16_t w, int16_t h, char *label, int8_t size = 1, tTGLTextAlign align = ALIGN_CENTER, uint16_t color = COLOR_TEXT) : TGLScreenElement(x, y, w, h) {
 	    this->label = label;
 	    this->size = size;
 	    this->align = align;
@@ -65,12 +65,24 @@ class TGLLabel : public TGLScreenElement {
     };
     virtual void repaint(ILI9488 *tft);
     virtual void paintBackground() {};
-    void setLabel(String label);
+    void setLabel(char *label);
     void setColor(uint16_t color);
-    String label;
+    char *label;
     uint16_t color;
     int8_t size;
     tTGLTextAlign align;
+};
+
+class TGLNumericLabel : public TGLLabel {
+  public:
+    TGLNumericLabel(int16_t x, int16_t y, int16_t w, int16_t h, char *label, char *format, int8_t size = 1, tTGLTextAlign align = ALIGN_CENTER, uint16_t color = COLOR_TEXT) : TGLLabel(x, y, w, h, label, size, align, color) {
+	    this->format = format;
+	    this->value = 0;
+    };
+    void setValue(double value);
+    void setFormat(char *format);
+    char *format;
+    double value;
 };
 
 enum tTGLButtonState {
@@ -81,7 +93,7 @@ enum tTGLButtonState {
 
 class TGLButton : public TGLLabel {
   public:
-    TGLButton(int16_t x, int16_t y, int16_t w, int16_t h, String label) : TGLLabel(x, y, w, h, label, 2, ALIGN_CENTER, COLOR_BTNTEXT) {
+    TGLButton(int16_t x, int16_t y, int16_t w, int16_t h, char *label) : TGLLabel(x, y, w, h, label, 2, ALIGN_CENTER, COLOR_BTNTEXT) {
 	    state = INACTIVE;
     };
     virtual void paintBackground();
@@ -96,19 +108,19 @@ class TGLWindRose : public TGLScreenElement {
       x0 = w / 2;
       y0 = h / 2;
       r = x0 - 1;
-      course = 120;
-      realWind = 40;
-      appWind = 32;
-      rudder = 10;
+      course = 120 * 0.017453293;
+      realWind = 40 * 0.017453293;
+      appWind = 32 * 0.017453293;
+      rudder = 10 * 0.017453293;
     };
     virtual void repaint(ILI9488 *tft);
-    void setCourse(int16_t course);
-    void setWind(int16_t realWind, int16_t appWind);
-    void setRudder(int16_t rudder);
-    int16_t course, realWind, appWind, rudder;
+    void setCourse(double course);
+    void setWind(double realWind, double appWind);
+    void setRudder(double rudder);
+    double course, realWind, appWind, rudder; //in radians!
   private:
     int16_t x0, y0, r;
-    void countDeltaXY(int16_t a, int16_t r, int16_t *x, int16_t *y);
+    void countDeltaXY(double a, int16_t r, int16_t *x, int16_t *y);
     void drawArrow(int16_t dx, int16_t dy, uint16_t color);
 };
 

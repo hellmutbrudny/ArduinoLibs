@@ -1705,27 +1705,3 @@ bool ParseN2kPGN130576(const tN2kMsg &N2kMsg, int8_t &PortTrimTab, int8_t &StbdT
   return true;
 }
 
-//*****************************************************************************
-// Custom Command
-
-void SetN2kCustomCommand(tN2kMsg &N2kMsg, char *deviceID, tN2kCustomCommand command, int16_t parameterA, int16_t parameterB) {
-    N2kMsg.SetPGN(130666L);
-    N2kMsg.Priority=2;
-    N2kMsg.AddStr(deviceID, 4);
-    N2kMsg.AddByte((unsigned char) command);
-    N2kMsg.Add2ByteInt(parameterA);
-    N2kMsg.Add2ByteInt(parameterB);
-}
-
-bool ParseN2kCustomCommand(const tN2kMsg &N2kMsg, char *deviceID, tN2kCustomCommand &command, int16_t &parameterA, int16_t &parameterB) {
-
-  if (N2kMsg.PGN!=130666L) return false;
-  int Index=0;
-  N2kMsg.GetStr(deviceID, 4, Index);
-  command=(tN2kCustomCommand)(N2kMsg.GetByte(Index));
-  parameterA=N2kMsg.Get2ByteInt(Index);
-  parameterB=N2kMsg.Get2ByteInt(Index);
-
-  return true;
-}
-

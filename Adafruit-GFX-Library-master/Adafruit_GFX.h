@@ -16,6 +16,7 @@ class Adafruit_GFX : public Print {
 
 public:
   Adafruit_GFX(int16_t w, int16_t h); // Constructor
+  virtual ~Adafruit_GFX(void) {}
 
   /**********************************************************************/
   /*!
@@ -366,7 +367,7 @@ private:
 class GFXcanvas16 : public Adafruit_GFX {
 public:
   GFXcanvas16(uint16_t w, uint16_t h);
-  ~GFXcanvas16(void);
+  virtual ~GFXcanvas16(void);
   void drawPixel(int16_t x, int16_t y, uint16_t color);
   void fillScreen(uint16_t color);
   void byteSwap(void);

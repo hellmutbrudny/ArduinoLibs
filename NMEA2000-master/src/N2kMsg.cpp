@@ -801,7 +801,7 @@ void tN2kMsg::Print(N2kStream *port, bool NoData) const {
 void tN2kMsg::PrintForUSB(N2kStream *port) const {
   if (port==0 || !IsValid()) return;
   port->print(F("$PGDIN,"));
-  port->print(PGN, 16); port->print(F(",")); 
+  port->print(PGN, HEX); port->print(F(",")); 
   port->print(Source); port->print(F(","));
   port->print(Destination); port->print(F(","));
   PrintBuf(port,DataLen,Data,false);

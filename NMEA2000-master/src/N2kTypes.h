@@ -325,21 +325,7 @@ enum tN2kTurnMode {
                             N2kTM_TurnRateControlled=1,
                             N2kTM_RadiusControlled=2,
                             N2kTM_Unavailable=7
-                          };
-                          
-enum tN2kCustomCommand {
-                            N2kCC_SetRudderZero=0,
-                            N2kCC_SetRudderMaxStarboard=1,
-                            N2kCC_SetRudderMaxPort=2,
-                            N2kCC_SetRudderMsgFreq=3,
-                            N2kCC_SetGyroMsgFreq=4,
-                            N2kCC_SetWindMsgFreq=5,
-                            N2kCC_NotifyLuffingUpSpeed=6,
-                            N2kCC_NotifyBearingOffSpeed=7,
-                            N2kCC_NotifyWaveLengthAndHeight=8,
-                            N2kCC_NotifyOffCourse=9,
-                            N2kCC_NotifyPositionOnWave=10
-};                          
+                          };                         
 
 //*****************************************************************************
 // Aliases for N2K standard types.

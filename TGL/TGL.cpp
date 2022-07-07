@@ -59,14 +59,30 @@ void TGLLabel::repaint(ILI9488 *tft) {
   }
 }
 
-void TGLLabel::setLabel(String label) {
-  this->label = label;
-  this->needsRepaint = true;  
+void TGLLabel::setLabel(char *label) {
+  if (strcmp(this->label, label) != 0) {
+    this->label = label;
+    this->needsRepaint = true;
+  }  
 }
 
 void TGLLabel::setColor(uint16_t color) {
   this->color = color;
   this->needsRepaint = true;  
+}
+
+void TGLNumericLabel::setValue(double value) {
+  char tmp[8];
+  sprintf(tmp, format, value);
+  if (strcmp(this->label, tmp) != 0) {
+    strcpy(this->label, tmp);
+    this->value = value;
+    this->needsRepaint = true;
+  }  
+}
+
+void TGLNumericLabel::setFormat(char *format) {
+  this->format = format;
 }
 
 void TGLButton::paintBackground() {
@@ -102,11 +118,11 @@ void TGLWindRose::repaint(ILI9488 *tft) {
     //circle
     buffer->drawCircle(x0, y0, r, COLOR_ROSE);
     //dead angle
-    countDeltaXY(40, r, &lx, &ly);
+    countDeltaXY(0.69813172, r, &lx, &ly); //40 degres
     buffer->drawLine(x0, y0, x0+ly, y0-lx, COLOR_ROSE);
     buffer->drawLine(x0, y0, x0-ly, y0-lx, COLOR_ROSE);    
     //rudder angle
-    countDeltaXY(35, r/3, &lx, &ly);
+    countDeltaXY(0.610865255, r/3, &lx, &ly); //35 degres
     buffer->drawLine(x0, y0, x0+ly, y0+lx, COLOR_DARKROSE);
     buffer->drawLine(x0, y0, x0-ly, y0+lx, COLOR_DARKROSE);    
     countDeltaXY(rudder, r/3, &lx, &ly);
@@ -137,26 +153,31 @@ void TGLWindRose::drawArrow(int16_t dx, int16_t dy, uint16_t color) {
                        color);
 }
 
-void TGLWindRose::countDeltaXY(int16_t a, int16_t r, int16_t *x, int16_t *y) {
-  float ar = 0.017453293 * a;
-  *x = (int16_t)(cos(ar) * r); 
-  *y = (int16_t)(sin(ar) * r);
+void TGLWindRose::countDeltaXY(double a, int16_t r, int16_t *x, int16_t *y) {
+  *x = (int16_t)(cos(a) * r); 
+  *y = (int16_t)(sin(a) * r);
 }
 
-void TGLWindRose::setCourse(int16_t course) {
-  this->course = course;
-  this->needsRepaint = true;
+void TGLWindRose::setCourse(double course) {
+  if (this->course != course) {
+    this->course = course;
+    this->needsRepaint = true;
+  }
 }
 
-void TGLWindRose::setWind(int16_t realWind, int16_t appWind) {
-  this->realWind = realWind;
-  this->appWind = appWind;
-  this->needsRepaint = true;
+void TGLWindRose::setWind(double realWind, double appWind) {
+  if (this->realWind != realWind || this->appWind != appWind) {
+    this->realWind = realWind;
+    this->appWind = appWind;
+    this->needsRepaint = true;
+  }
 }
 
-void TGLWindRose::setRudder(int16_t rudder) {
-  this->rudder = rudder;
-  this->needsRepaint = true;
+void TGLWindRose::setRudder(double rudder) {
+  if (rudder != this->rudder) {
+    this->rudder = rudder;
+    this->needsRepaint = true;
+  }
 }
 
 void TGLScreen::repaintElements(ILI9488 *tft) {

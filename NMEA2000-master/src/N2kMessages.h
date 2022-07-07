@@ -1561,17 +1561,4 @@ inline bool ParseN2kTrimTab(const tN2kMsg &N2kMsg, int8_t &PortTrimTab, int8_t &
   return ParseN2kPGN130576(N2kMsg, PortTrimTab, StbdTrimTab);
 }
 
-//*****************************************************************************
-// My custom command:
-// Input:
-// - DeviceID         
-// - CommandID              
-// - parameterA             
-// - parameterB                        
-// Output:
-//  - N2kMsg                NMEA2000 message ready to be send.
-void SetN2kCustomCommand(tN2kMsg &N2kMsg, char *DeviceID, tN2kCustomCommand command, int16_t parameterA=0, int16_t parameterB=0);
-
-bool ParseN2kCustomCommand(const tN2kMsg &N2kMsg, char *DeviceID, tN2kCustomCommand &command, int16_t &parameterA, int16_t &parameterB);
-
 #endif
