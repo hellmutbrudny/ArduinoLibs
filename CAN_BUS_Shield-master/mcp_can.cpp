@@ -446,6 +446,22 @@ byte MCP_CAN::mcp2515_configRate(const byte canSpeed, const byte clock)
       }
       break;
 
+    case (MCP_12MHz) :
+      switch (canSpeed)
+      {
+        case (CAN_250KBPS) :
+          cfg1 = MCP_12MHz_250kBPS_CFG1;
+          cfg2 = MCP_12MHz_250kBPS_CFG2;
+          cfg3 = MCP_12MHz_250kBPS_CFG3;
+          Serial.println("Yeap, 12MHz_250kBPS!");
+          break;
+
+        default:
+          set = 0;
+          break;
+      }
+      break;
+
     case (MCP_8MHz) :
       switch (canSpeed)
       {
@@ -1051,7 +1067,7 @@ byte MCP_CAN::sendMsgBuf(byte status, unsigned long id, byte ext, byte rtrBit, b
 byte MCP_CAN::trySendMsgBuf(unsigned long id, byte ext, byte rtrBit, byte len, const byte *buf, byte iTxBuf)
 {
   byte txbuf_n;
-
+  
   if ( iTxBuf<MCP_N_TXBUFFERS ) { // Use specified buffer
     if ( mcp2515_isTXBufFree(&txbuf_n,iTxBuf) != MCP2515_OK ) return CAN_FAILTX;
   } else {

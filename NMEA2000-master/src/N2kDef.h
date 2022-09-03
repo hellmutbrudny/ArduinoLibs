@@ -55,7 +55,7 @@ extern uint32_t millis();
 // our own helper class which is handled by the N2kStream. On anything
 // else we resort to char strings.
 #if defined(ARDUINO)
-#include <WString.h>
+//#include <WString.h>
 #elif defined(__AVR__)
 #include <avr/pgmspace.h>
 class __FlashStringHelper;

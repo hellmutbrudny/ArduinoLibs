@@ -119,7 +119,7 @@ bool tNMEA2000_mcp::CANSendFrame(unsigned long id, unsigned char len, const unsi
         DbgStartMcpSpeed;
         result=(N2kCAN.trySendExtMsgBuf(id, len, buf, wait_sent?N2kCAN.getLastTxBuffer():0xff)==CAN_OK);
         DbgEndMcpSpeed;
-        if ( !result ) {
+       if ( !result ) {
           DbgClearMcpSpeed;
           result=pTxBuf->AddFrame(id,len,buf);
         }
@@ -131,8 +131,6 @@ bool tNMEA2000_mcp::CANSendFrame(unsigned long id, unsigned char len, const unsi
 #endif  
     } else {
       result=(N2kCAN.trySendExtMsgBuf(id, len, buf, wait_sent?N2kCAN.getLastTxBuffer():0xff)==CAN_OK);
-	Serial.print("result=");
-	Serial.println(result);
     }
 
     DbgTestMcpSpeed { DbgPrintN2kMcpSpeed("Send elapsed: "); DbgPrintLnN2kMcpSpeed(McpElapsed); }
@@ -183,7 +181,6 @@ bool tNMEA2000_mcp::CANOpen() {
     }
 
     CanInUse=IsOpen;
-
     return IsOpen;
 }
 

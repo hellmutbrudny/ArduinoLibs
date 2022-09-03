@@ -302,6 +302,9 @@ bool IsDefaultFastPacketMessage(unsigned long PGN) {
                                       case 130567L: // Watermaker Input Setting and Status, pri=6, period=2500
                                       case 130577L: // Direction Data PGN, pri=3, period=1000
                                       case 130578L: // Vessel Speed Components, pri=2, period=250
+                                      case 130666L: // Custom command - no args
+                                      case 130667L: // Custom command - 2 int args
+                                      case 130668L: // Custom command - 1 double arg
                                       return true;
                                   }
                                   return false;

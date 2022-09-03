@@ -253,6 +253,7 @@
 
 #define MCP_16MHz	1
 #define MCP_8MHz	2
+#define MCP_12MHz	3
 
 // speed 16M
 
@@ -328,6 +329,11 @@
 #define MCP_16MHz_666kBPS_CFG2 (0xA0)
 #define MCP_16MHz_666kBPS_CFG3 (0x04)
 
+// speed 12M
+
+#define MCP_12MHz_250kBPS_CFG1 (0x01)
+#define MCP_12MHz_250kBPS_CFG2 (0x9b)
+#define MCP_12MHz_250kBPS_CFG3 (0x02)
 
 // speed 8M
 
