@@ -5,24 +5,22 @@
 
 class CycleEntry {
   public:
-    CycleEntry(unsigned long interval, void (* handler)(), bool breaksCycle = true); 
-    void init();
+    CycleEntry(unsigned long interval, void (* handler)(), bool continueCycle = false);
     bool handle(unsigned long time);
+    void setInterval(unsigned long interval);
   private:
     unsigned long _lastTime;
     unsigned long _interval;
     void (* _handler)();
-    bool _breaksCycle;
+    bool _continueCycle;
 };
 
 class CycleRunner {
   public:
-    CycleRunner(CycleEntry *cycleEntries, int entriesCount);
-    void init();
+    CycleRunner(CycleEntry *cycleEntries);
     void runCycle();
   private:
     CycleEntry *_cycleEntries;
-    int _entriesCount;
 };
 
 #endif

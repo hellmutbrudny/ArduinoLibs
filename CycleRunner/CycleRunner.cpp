@@ -1,44 +1,34 @@
 #include "CycleRunner.h"
 
-CycleEntry::CycleEntry(unsigned long interval, void (* handler)(), bool breaksCycle) {
+CycleEntry::CycleEntry(unsigned long interval, void (* handler)(), bool continueCycle) {
   _interval = interval;
   _handler = handler;
-  _breaksCycle = breaksCycle;
-}
-
-void CycleEntry::init() {
-  _lastTime = millis();
+  _continueCycle = continueCycle;
+  _lastTime = 0;
 }
 
 bool CycleEntry::handle(unsigned long time) {
+  if (_handler == nullptr) {
+    return false;
+  }
   if (time - _lastTime >= _interval) {
     _handler();
     _lastTime = time;
-    return _breaksCycle;
+    return _continueCycle;
   }
-  return false;
+  return true;
 }
 
-CycleRunner::CycleRunner(CycleEntry *cycleEntries, int entriesCount) {
+void CycleEntry::setInterval(unsigned long interval) {
+  _interval = interval;
+}
+
+CycleRunner::CycleRunner(CycleEntry *cycleEntries) {
   _cycleEntries = cycleEntries;
-  _entriesCount = entriesCount;
-}
-
-void CycleRunner::init() {
-  for (byte i = 0; i < _entriesCount; i++) {
-    _cycleEntries[i].init();
-  }
 }
 
 void CycleRunner::runCycle() {
   unsigned long time = millis();
-  for (byte i = 0; i < _entriesCount; i++) {
-    if (_cycleEntries[i].handle(time)) {
-      // We only call just one of entries on each cycle check to not keep cycle running too long - unless it's non-breaking entry.
-      break;  
-    }
-  }
+  byte i = 0;
+  while (_cycleEntries[i].handle(time)) {i++;}
 }
-
-
-
