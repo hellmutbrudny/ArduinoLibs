@@ -6,8 +6,9 @@
 class CycleEntry {
   public:
     CycleEntry(unsigned long interval, void (* handler)(), bool continueCycle = false);
-    bool handle(unsigned long time);
+    unsigned long handle(unsigned long time);
     void setInterval(unsigned long interval);
+    bool isNotLast();
   private:
     unsigned long _lastTime;
     unsigned long _interval;
