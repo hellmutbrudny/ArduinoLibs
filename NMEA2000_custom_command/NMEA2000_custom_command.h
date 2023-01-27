@@ -145,20 +145,24 @@ void initNMEA2k() {
   NMEA2000.EnableForward(true);
   NMEA2000.SetForwardStream(&Serial);
   NMEA2000.SetForwardType(tNMEA2000::fwdt_Text);
-  //NMEA2000.SetDebugMode(dm_ClearText);
+  NMEA2000.SetDebugMode(tNMEA2000::dm_ClearText);
   #else
   NMEA2000.EnableForward(false); // Disable all msg forwarding to USB (=Serial) 
   #endif
-  
-  NMEA2000.SetMode(tNMEA2000::N2km_ListenAndNode, N2KNODE_DEVICE);
   NMEA2000.ExtendTransmitMessages(N2K_DEVICE_TRANSMIT_MESSAGES);
   NMEA2000.SetHeartbeatInterval(5000);
   #if REGISTER_COUNT > 0
   NMEA2000.SetMsgHandler(handleN2kRegisters);
-  #else
+  NMEA2000.SetMode(tNMEA2000::N2km_ListenAndNode, N2KNODE_DEVICE);
+  #elif N2K_MSG_HANDLING == 1
   NMEA2000.SetMsgHandler(handleN2kMsg);
+  NMEA2000.SetMode(tNMEA2000::N2km_ListenAndNode, N2KNODE_DEVICE);
+  #else
+  NMEA2000.SetMode(tNMEA2000::N2km_NodeOnly, N2KNODE_DEVICE);  
   #endif
+  Serial.println("before NMEA2000.Open");
   NMEA2000.Open();
+  Serial.println("after NMEA2000.Open");
 }
 
 void setCustomCommand(tN2kMsg &N2kMsg, double command, uint32_t param1, uint32_t param2) {
