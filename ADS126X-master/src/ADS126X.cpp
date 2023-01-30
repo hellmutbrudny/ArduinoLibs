@@ -25,11 +25,10 @@ void ADS126X::begin() {
   ADS126X::reset(); // reset the board, just in case. This also reads all registers
 }
 
-void ADS126X::setStartPin(uint8_t pin) {
-  start_used = true;
-  start_pin = pin;
-  _ads126x_setup_output(start_pin);
-  _ads126x_write_pin_low(start_pin);
+void ADS126X::setDRDYPin(uint8_t pin) {
+  drdy_used = true;
+  drdy_pin = pin;
+  _ads126x_setup_input(drdy_pin);
 }
 
 /*!< Regular ADC Commands    */
@@ -44,12 +43,7 @@ void ADS126X::reset() {
 }
 
 void ADS126X::startADC1() {
-  if(start_used) {
-    _ads126x_write_pin_low(start_pin);
-    _ads126x_delay(2);
-    _ads126x_write_pin_high(start_pin);
-  }
-  else ADS126X::sendCommand(ADS126X_START1);
+  ADS126X::sendCommand(ADS126X_START1);
 }
 
 void ADS126X::stopADC1() {
@@ -64,8 +58,43 @@ void ADS126X::stopADC2() {
   ADS126X::sendCommand(ADS126X_STOP2);
 }
 
-int32_t ADS126X::readADC1(uint8_t pos_pin,uint8_t neg_pin) {
-  if(cs_used) _ads126x_write_pin_low(cs_pin);
+uint8_t ADS126X::setADC1Input(uint8_t pos_pin,uint8_t neg_pin) {
+  // check if desired pins are different than old pins
+  if((REGISTER.INPMUX.bit.MUXN != neg_pin) || (REGISTER.INPMUX.bit.MUXP != pos_pin)) {
+    REGISTER.INPMUX.bit.MUXN = neg_pin;
+    REGISTER.INPMUX.bit.MUXP = pos_pin;
+    ADS126X::writeRegister(ADS126X_INPMUX); // replace on ads126x
+    return 1;
+  }
+  return 0;
+}
+
+uint8_t ADS126X::setADC2Input(uint8_t pos_pin,uint8_t neg_pin) {
+  // check if desired pins are different than old pins
+  if((REGISTER.ADC2MUX.bit.MUXN != neg_pin) || (REGISTER.ADC2MUX.bit.MUXP != pos_pin)) {
+    REGISTER.ADC2MUX.bit.MUXN = neg_pin;
+    REGISTER.ADC2MUX.bit.MUXP = pos_pin;
+    ADS126X::writeRegister(ADS126X_ADC2MUX); // replace on ads126x
+    return 1;
+  }
+  return 0;
+}
+
+void ADS126X::waitForDRDY() {
+  if (drdy_used) {
+    while (_ads126x_is_pin_high(drdy_pin));
+  }
+}
+
+int32_t ADS126X::readADC1() {
+  return ADS126X::readADCX(ADS126X_RDATA1);
+}
+
+int32_t ADS126X::readADC2() {
+  return ADS126X::readADCX(ADS126X_RDATA2);
+}
+
+int32_t ADS126X::readADCX(uint8_t command) {
 
   // create buffer to hold transmission
   uint8_t buff[10] = {0}; // plenty of room, all zeros
@@ -81,22 +110,17 @@ int32_t ADS126X::readADC1(uint8_t pos_pin,uint8_t neg_pin) {
   } ADC_BYTES;
   ADC_BYTES.reg = 0; // clear the ram just in case
 
-  // check if desired pins are different than old pins
-  if((REGISTER.INPMUX.bit.MUXN != neg_pin) || (REGISTER.INPMUX.bit.MUXP != pos_pin)) {
-    REGISTER.INPMUX.bit.MUXN = neg_pin;
-    REGISTER.INPMUX.bit.MUXP = pos_pin;
-    ADS126X::writeRegister(ADS126X_INPMUX); // replace on ads126x
-  }
-
   uint8_t i = 0; // current place in outgoing buffer
-  buff[i] = ADS126X_RDATA1; // the read adc1 command
+  buff[i] = command; // the read command
   i++;
 
   if(REGISTER.INTERFACE.bit.STATUS) i++; // place to hold status byte
   i += 4; // place to hold adc data
   if(REGISTER.INTERFACE.bit.CRC>0) i++; // place to hold checksum/crc byte
 
+  if(cs_used) _ads126x_write_pin_low(cs_pin);
   _ads126x_spi_rw(buff,i); // write spi, save values on buff
+  if(cs_used) _ads126x_write_pin_high(cs_pin);
 
   uint8_t j = 1; // start at byte 1, either status or first adc value
 
@@ -111,77 +135,19 @@ int32_t ADS126X::readADC1(uint8_t pos_pin,uint8_t neg_pin) {
    ADC_BYTES.bit.DATA3 = buff[j]; j++;
    ADC_BYTES.bit.DATA4 = buff[j]; j++;
 
-  if(REGISTER.INTERFACE.bit.CRC==ADS126X_CHECKSUM) {
-    uint8_t checkbyte = buff[j];
-    CHECKSUM = ADS126X::find_checksum(ADC_BYTES.reg,checkbyte);
-   }
-   else if(REGISTER.INTERFACE.bit.CRC==ADS126X_CHECK_CRC) {
-    uint8_t checkbyte = buff[j];
-    CHECKSUM = ADS126X::find_crc(ADC_BYTES.reg,checkbyte);
-  }
+//  if(REGISTER.INTERFACE.bit.CRC==ADS126X_CHECKSUM) {
+//    uint8_t checkbyte = buff[j];
+//    CHECKSUM = ADS126X::find_checksum(ADC_BYTES.reg,checkbyte);
+//   }
+//   else if(REGISTER.INTERFACE.bit.CRC==ADS126X_CHECK_CRC) {
+//    uint8_t checkbyte = buff[j];
+//    CHECKSUM = ADS126X::find_crc(ADC_BYTES.reg,checkbyte);
+//  }
+  
+//  if (command == ADS126X_RDATA2) {
+//    ADC_BYTES.reg >>= 8;
+//  }
 
-  if(cs_used) _ads126x_write_pin_high(cs_pin);
-  return ADC_BYTES.reg;
-}
-
-int32_t ADS126X::readADC2(uint8_t pos_pin,uint8_t neg_pin) {
-  if(cs_used) _ads126x_write_pin_low(cs_pin);
-
-  // create buffer to hold transmission
-  uint8_t buff[10] = {0}; // plenty of room, all zeros
-
-  union { // create a structure to hold all the data
-    struct {
-      uint32_t DATA3:8; // bits 0.. 7
-      uint32_t DATA2:8; // bits 8.. 15
-      uint32_t DATA1:8; // bits 16.. 23
-      uint32_t :8;      // bits 24.. 31
-    } bit;
-    uint32_t reg;
-  } ADC_BYTES;
-  ADC_BYTES.reg = 0; // clear so pad byte is 0
-
-  // check if desired pins are different than old pins
-  if((REGISTER.ADC2MUX.bit.MUXN != neg_pin) || (REGISTER.ADC2MUX.bit.MUXP != pos_pin)) {
-    REGISTER.ADC2MUX.bit.MUXN = neg_pin;
-    REGISTER.ADC2MUX.bit.MUXP = pos_pin;
-    ADS126X::writeRegister(ADS126X_ADC2MUX); // replace on ads126x
-  }
-
-  uint8_t i = 0; // current place in outgoing buffer
-  buff[i] = ADS126X_RDATA2; // the read adc2 command
-  i++;
-
-  if(REGISTER.INTERFACE.bit.STATUS) i++; // place to hold status byte
-  i += 3; // place to hold adc data
-  i++; // place to hold pad byte
-  if(REGISTER.INTERFACE.bit.CRC>0) i++; // place to hold checksum/crc byte
-
-  _ads126x_spi_rw(buff,i); // write spi, save values on buff
-
-  uint8_t j = 1; // start at byte 1, either status or first adc value
-
-  if(REGISTER.INTERFACE.bit.STATUS) { // if status is being read
-    STATUS.reg = buff[j]; // save status byte
-    j++; // increment position counter
-  }
-
-   // save the data bytes
-   ADC_BYTES.bit.DATA1 = buff[j]; j++;
-   ADC_BYTES.bit.DATA2 = buff[j]; j++;
-   ADC_BYTES.bit.DATA3 = buff[j]; j++;
-   j++; // skip pad byte
-
-  if(REGISTER.INTERFACE.bit.CRC==ADS126X_CHECKSUM) {
-    uint8_t checkbyte = buff[j];
-    CHECKSUM = ADS126X::find_checksum(ADC_BYTES.reg,checkbyte);
-   }
-   else if(REGISTER.INTERFACE.bit.CRC==ADS126X_CHECK_CRC) {
-    uint8_t checkbyte = buff[j];
-    CHECKSUM = ADS126X::find_crc(ADC_BYTES.reg,checkbyte);
-  }
-
-  if(cs_used) _ads126x_write_pin_high(cs_pin);
   return ADC_BYTES.reg;
 }
 
@@ -442,17 +408,17 @@ void ADS126X::setReference(uint8_t negativeReference, uint8_t positiveReference)
 
 void ADS126X::setGain2(uint8_t gain) {
   REGISTER.ADC2CFG.bit.GAIN2 = gain;
-  ADS126X::writeRegister(ADS126X_MODE2);
+  ADS126X::writeRegister(ADS126X_ADC2CFG);
 }
 
 void ADS126X::setRate2(uint8_t rate) {
   REGISTER.ADC2CFG.bit.DR2 = rate;
-  ADS126X::writeRegister(ADS126X_MODE2);
+  ADS126X::writeRegister(ADS126X_ADC2CFG);
 }
 
 void ADS126X::setReference2(uint8_t reference) {
   REGISTER.ADC2CFG.bit.REF2 = reference;
-  ADS126X::writeRegister(ADS126X_MODE2);
+  ADS126X::writeRegister(ADS126X_ADC2CFG);
 }
 
 /*!< GPIO commands        */

@@ -17,7 +17,7 @@ class ADS126X {
     ADS126X(void);
     void begin(uint8_t chip_select);
     void begin(void);
-    void setStartPin(uint8_t pin); // designate a pin connected to START
+    void setDRDYPin(uint8_t pin); // designate a pin connected to START
 
     // All ADC Commands. Page 85
     //General Commands
@@ -28,8 +28,12 @@ class ADS126X {
     void startADC2(void);
     void stopADC2(void);
     // Analog Read Functions
-    int32_t readADC1(uint8_t pos_pin,uint8_t neg_pin);
-    int32_t readADC2(uint8_t pos_pin,uint8_t neg_pin);
+    uint8_t setADC1Input(uint8_t pos_pin,uint8_t neg_pin);
+    uint8_t setADC2Input(uint8_t pos_pin,uint8_t neg_pin);
+    void waitForDRDY();
+    int32_t readADC1();
+    int32_t readADC2();
+    int32_t readADCX(uint8_t command);
     // Calibration Functions
     void calibrateSysOffsetADC1(uint8_t shorted1,uint8_t shorted2);
     void calibrateGainADC1(uint8_t vcc_pin,uint8_t gnd_pin);
@@ -42,7 +46,6 @@ class ADS126X {
     void setIDAC2Pin(uint8_t pin);
     void setIDAC1Mag(uint8_t magnitude);
     void setIDAC2Mag(uint8_t magnitude);
-
 
     // POWER functions
     bool checkResetBit(void);
@@ -113,8 +116,8 @@ class ADS126X {
 
     bool cs_used = false;
     uint8_t cs_pin; // chip select pin
-    bool start_used = false;
-    uint8_t start_pin; // start pin
+    bool drdy_used = false;
+    uint8_t drdy_pin; // start pin
 
     ADS126X_STATUS_Type STATUS; // save last status and checksum values
     uint8_t CHECKSUM;

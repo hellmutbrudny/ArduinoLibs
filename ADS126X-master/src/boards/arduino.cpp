@@ -9,6 +9,7 @@ Only compiles if ARDUINO is defined, which is from the compile process.
 #include <Arduino.h>
 #include <SPI.h>
 
+
 // setup microcontroller pin as output
 void _ads126x_setup_output(uint8_t pin) {
   pinMode(pin,OUTPUT);
@@ -22,6 +23,10 @@ void _ads126x_setup_input(uint8_t pin) {
 // read microcontroller digital pin
 uint8_t _ads126x_read_pin(uint8_t pin) {
   return digitalRead(pin);
+}
+
+uint8_t _ads126x_is_pin_high(uint8_t pin) {
+  return digitalRead(pin) == HIGH;
 }
 
 // write value to microcontroller digital pin

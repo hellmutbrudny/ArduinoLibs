@@ -12,6 +12,7 @@ void _ads126x_setup_input(uint8_t pin);
 
 // read microcontroller digital pin
 uint8_t _ads126x_read_pin(uint8_t pin);
+uint8_t _ads126x_is_pin_high(uint8_t pin);
 
 // write microcontroller pin high and low
 void _ads126x_write_pin_high(uint8_t pin);
