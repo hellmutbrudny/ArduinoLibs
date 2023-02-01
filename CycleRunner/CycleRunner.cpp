@@ -7,16 +7,20 @@ CycleEntry::CycleEntry(unsigned long interval, void (* handler)(), bool continue
   _lastTime = 0;
 }
 
-bool CycleEntry::handle(unsigned long time) {
-  if (_handler == nullptr) {
-    return false;
-  }
+unsigned long CycleEntry::handle(unsigned long time) {
   if (time - _lastTime >= _interval) {
     _handler();
     _lastTime = time;
-    return _continueCycle;
+    if (_continueCycle) {
+      return _interval;
+    }
+    return 0;
   }
-  return true;
+  return _lastTime + _interval - time;
+}
+
+bool CycleEntry::isNotLast() {
+  return _handler != nullptr;
 }
 
 void CycleEntry::setInterval(unsigned long interval) {
@@ -30,5 +34,18 @@ CycleRunner::CycleRunner(CycleEntry *cycleEntries) {
 void CycleRunner::runCycle() {
   unsigned long time = millis();
   byte i = 0;
-  while (_cycleEntries[i].handle(time)) {i++;}
+  unsigned long min_to_wait = 10000;
+  while (_cycleEntries[i].isNotLast()) {
+    unsigned long to_wait = _cycleEntries[i].handle(time);
+    if (to_wait == 0) {
+      return;
+    }
+    if (to_wait < min_to_wait) {
+      min_to_wait = to_wait;
+    }
+    i++;
+  }
+  if (min_to_wait > 0) {
+    delay(min_to_wait);
+  }
 }

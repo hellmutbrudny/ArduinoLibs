@@ -5,8 +5,9 @@
 #include <NMEA2000_CAN.h>
 #include "NMEA2000_custom_command_devices.h"
 
-//************
+//*****************************************************************************
 // Register handling
+
 #if REGISTER_COUNT > 0
 #include <EEPROM.h>
 
@@ -15,7 +16,9 @@ void sendCustomCommand(double command, uint32_t param1, uint32_t param2);
 bool parseCustomCommand(const tN2kMsg &N2kMsg, uint16_t &sender, double &command, uint32_t &param1, uint32_t &param2);
 
 uint16_t readEEPROM16b(int addr) {
-  return (((uint16_t)EEPROM.read(addr))<<8) && ((uint16_t)EEPROM.read(addr + 1));
+  uint16_t b1 = EEPROM.read(addr);
+  uint16_t b2 = EEPROM.read(addr + 1);
+  return b1 << 8 | b2;
 }
 
 void writeEEPROM16b(int addr, uint16_t val) {
@@ -124,7 +127,7 @@ void initRegisters() {
 #endif
 
 //*****************************************************************************
-// Custom Command
+// NMEA 2000 Custom Command
 
 void initNMEA2k() {
   NMEA2000.SetProductInformation("0001", // Manufacturer's Model serial code
@@ -138,18 +141,28 @@ void initNMEA2k() {
                                 N2K_DEVICE_CLASS,
                                 N2K_DEVICE_REGISTRATION
                                 );
-  NMEA2000.EnableForward(false); // Disable all msg forwarding to USB (=Serial)
-  // NMEA2000.SetForwardStream(&Serial);
-  // NMEA2000.SetForwardType(tNMEA2000::fwdt_Text);
-  NMEA2000.SetMode(tNMEA2000::N2km_ListenAndNode, N2KNODE_DEVICE);
+  #ifdef DEBUG_N2K
+  NMEA2000.EnableForward(true);
+  NMEA2000.SetForwardStream(&Serial);
+  NMEA2000.SetForwardType(tNMEA2000::fwdt_Text);
+  NMEA2000.SetDebugMode(tNMEA2000::dm_ClearText);
+  #else
+  NMEA2000.EnableForward(false); // Disable all msg forwarding to USB (=Serial) 
+  #endif
   NMEA2000.ExtendTransmitMessages(N2K_DEVICE_TRANSMIT_MESSAGES);
   NMEA2000.SetHeartbeatInterval(5000);
   #if REGISTER_COUNT > 0
   NMEA2000.SetMsgHandler(handleN2kRegisters);
-  #else
+  NMEA2000.SetMode(tNMEA2000::N2km_ListenAndNode, N2KNODE_DEVICE);
+  #elif N2K_MSG_HANDLING == 1
   NMEA2000.SetMsgHandler(handleN2kMsg);
+  NMEA2000.SetMode(tNMEA2000::N2km_ListenAndNode, N2KNODE_DEVICE);
+  #else
+  NMEA2000.SetMode(tNMEA2000::N2km_NodeOnly, N2KNODE_DEVICE);  
   #endif
+  Serial.println("before NMEA2000.Open");
   NMEA2000.Open();
+  Serial.println("after NMEA2000.Open");
 }
 
 void setCustomCommand(tN2kMsg &N2kMsg, double command, uint32_t param1, uint32_t param2) {

@@ -11,27 +11,27 @@
   #define N2K_DEVICE_CLASS 40
   #define N2K_MSG_HANDLING 0
   #define REGISTER_COUNT 3
-  const unsigned long N2K_DEVICE_TRANSMIT_MESSAGES[] PROGMEM={127245L,0};
+  const unsigned long N2K_DEVICE_TRANSMIT_MESSAGES[] PROGMEM={127245L, 0};
   uint16_t registers[] = {N2KREG_RudderMaxPort, N2KREG_RudderMaxSter, N2KREG_RudderMsgFreq};
   uint16_t registerValues[] = {80, 485, 1000};
   // Virtual
   void handleRegChange(int idx);
   uint16_t sensorValueForReg(int idx);
 #elif N2KNODE_DEVICE == N2KNODE_POWER_MONITOR
-  // Arduino Due
+  // Raspberry Pi Pico
   #define N2K_DEVICE_NAME "Whocares Power Monitor"
   #define N2K_DEVICE_VERSION "1.0"
   #define N2K_DEVICE_SERIAL 011213
   #define N2K_DEVICE_FUNCTION 150
   #define N2K_DEVICE_CLASS 75
-  #define N2K_MSG_HANDLING 0
-  #define REGISTER_COUNT 1
-  const unsigned long N2K_DEVICE_TRANSMIT_MESSAGES[] PROGMEM={0};
-  uint16_t registers[] = {N2KREG_PMMsgFreq};
-  uint16_t registerValues[] = {1000};
+  #define PSEUDO_EEPROM 1
+  #define REGISTER_COUNT 2
+  const unsigned long N2K_DEVICE_TRANSMIT_MESSAGES[] PROGMEM={127505L, 127508L, 0};
+  uint16_t registers[] = {N2KREG_PMMsgFreq, N2KREG_TankMsgFreq};
+  uint16_t registerValues[] = {1000, 10000};
   // Virtual
   void handleRegChange(int idx);
-  uint16_t sensorValueForReg(int idx) {return 0;}
+  uint16_t sensorValueForReg(int idx);
 #elif N2KNODE_DEVICE == N2KNODE_ENGINE_DRIVER
   // Raspberry Pi Pico
   #define N2K_DEVICE_NAME "Whocares Engine Driver"
@@ -41,7 +41,7 @@
   #define N2K_DEVICE_CLASS 50
   #define PSEUDO_EEPROM 1
   #define REGISTER_COUNT 6
-  const unsigned long N2K_DEVICE_TRANSMIT_MESSAGES[] PROGMEM={130666L,0};
+  const unsigned long N2K_DEVICE_TRANSMIT_MESSAGES[] PROGMEM={0};
   uint16_t registers[] = {N2KREG_GearForward, N2KREG_GearIdle, N2KREG_GearReverse, N2KREG_ThrottleMin, N2KREG_ThrottleMax, N2KREG_EngineReportFreq};
   uint16_t registerValues[] = {0, 0, 0, 0, 0, 1500};
   // Virtual

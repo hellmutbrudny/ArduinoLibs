@@ -56,9 +56,9 @@
 
 // N2KNODE_POWER_MONITOR
 #define N2KREG_PMMsgFreq 500 //
+#define N2KREG_TankMsgFreq 501 //
 
 // N2KNODE_DATA_COLLECTOR
-#define N2KREG_WiFiOn 600 //
 
 // N2KNODE_GYROWEATHER_SENSOR
 #define N2KREG_RateOfTurnMsgFreq 800
