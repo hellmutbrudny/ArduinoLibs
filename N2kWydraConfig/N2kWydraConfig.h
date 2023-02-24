@@ -32,7 +32,7 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9002;
   const unsigned char N2K_DEVICE_FUNCTION = 140;
   const unsigned char N2K_DEVICE_CLASS = 50;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_GearForwardPos, N2KREG_GearIdlePos, N2KREG_GearReversePos, N2KREG_ThrottleMinPos, N2KREG_ThrottleMaxPos, N2KREG_EngineReportFreq, N2KREG_Throttle, N2KREG_Gear, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_GearForwardPos, N2KREG_GearIdlePos, N2KREG_GearReversePos, N2KREG_ThrottleMinPos, N2KREG_ThrottleMaxPos, N2KREG_EngineReportFreq, N2KREG_Gear, N2KREG_SetThrottle, 0};
   int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0, 0, 1500, 0, 0};
 #elif N2KNODE_DEVICE == N2KNODE_AUTOPILOT
   // CANBed - Arduino CAN-Bus RP2040
@@ -40,7 +40,7 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9003;
   const unsigned char N2K_DEVICE_FUNCTION = 150;
   const unsigned char N2K_DEVICE_CLASS = 40;
-  unsigned char REGISTERS_ARRAY[] = {N2KCC_SetAutopilotOn, N2KCC_SetAutopilotCourse, N2KCC_SetAutopilotTurnSpeed, N2KCC_SetAutopilotRudderPosition, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_AutopilotCalibration, N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, 0};
   int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0};
 #elif N2KNODE_DEVICE == N2KNODE_BMS
   // CANBed - Arduino CAN-Bus RP2040
@@ -48,7 +48,7 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9004;
   const unsigned char N2K_DEVICE_FUNCTION = 170;
   const unsigned char N2K_DEVICE_CLASS = 35;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSMsgFreq, N2KNTF_BMSStatus, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSMsgFreq, N2KREG_BMSStatus, 0};
   int32_t REGISTER_VALUES_ARRAY[] = {365, 350, 5000, 0};
 #elif N2KNODE_DEVICE == N2KNODE_GYROWEATHER_SENSOR
   // Teensy 3.2

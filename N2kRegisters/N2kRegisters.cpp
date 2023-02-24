@@ -49,7 +49,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
   // Check if EEPROM structure is relevant to Registers
   byte check0 = EEPROM.read(0);
   byte check1 = EEPROM.read(1);
-  if (check0 == 'R' && check1 == registerCount) {
+  if (check0 == 'X' && check1 == registerCount) {
     int count = 0;
     for (; count < registerCount; count++) {
       if (EEPROM.read(count+2) != registers[count]) {
@@ -64,7 +64,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
   }
 
   // Save default values to EEPROM (initialization)
-  EEPROM.write(0, 'R');
+  EEPROM.write(0, 'X');
   EEPROM.write(1, registerCount);
   for (int i = 0; i < registerCount; i++) {
     EEPROM.write(i+2, registers[i]);
@@ -131,8 +131,7 @@ void tN2kRegisters::handleSetRegisterBySensor(unsigned char registerId, int idx)
   }
 }
 
-void tN2kRegisters::sendN2kRegisterCommand(unsigned char command, unsigned char registerId, int32_t param) {
-  tN2kMsg N2kMsg;
+void tN2kRegisters::setN2kRegisterCommand(tN2kMsg &N2kMsg, unsigned char command, unsigned char registerId, int32_t param) {
   N2kMsg.SetPGN(127501L);
   N2kMsg.Priority = 3;
 	tN2kBinaryStatus BankStatus = param;
@@ -141,7 +140,12 @@ void tN2kRegisters::sendN2kRegisterCommand(unsigned char command, unsigned char 
 	BankStatus <<= 8;
 	BankStatus |= command;
 	N2kMsg.AddUInt64(BankStatus);
-  N2K->SendMsg(N2kMsg);
+}
+
+void tN2kRegisters::sendN2kRegisterCommand(unsigned char command, unsigned char registerId, int32_t param) {
+  tN2kMsg N2kMsg;
+  setN2kRegisterCommand(N2kMsg, command, registerId, param);
+  sendN2kMsg(N2kMsg);
 }
 
 bool tN2kRegisters::parseN2kRegisterCommand(const tN2kMsg &N2kMsg, unsigned char &command, unsigned char &registerId, int32_t &param) {
@@ -195,9 +199,24 @@ int32_t tN2kRegisters::getRegisterValue(unsigned char registerId) {
   return -1;
 }
 
+void tN2kRegisters::setRegisterValue(unsigned char registerId, int32_t value) {
+  int idx = getRegisterIndex(registerId);
+  if (idx >= 0) {
+    registerValues[idx] = value;
+  }
+}
 void tN2kRegisters::saveRegistersToEEPROM() {
+  if (registerCount == 0) {
+    return;
+  }
   for (int i = 0; i < registerCount; i++) {
-    writeEEPROM32b(2*i + 2+registerCount, registerValues[i]);
+    if (registers[i] < 128) {
+      int addr = 4*i + 2+registerCount;
+      int32_t current = readEEPROM32b(addr);
+      if (current != registerValues[i]) {
+        writeEEPROM32b(addr, registerValues[i]);
+      }
+    }
   }
   #ifdef PSEUDO_EEPROM
     EEPROM.commit();
@@ -206,7 +225,10 @@ void tN2kRegisters::saveRegistersToEEPROM() {
 
 void tN2kRegisters::readRegistersFromEEPROM() {
   for (int i = 0; i < registerCount; i++) {
-    registerValues[i] = readEEPROM32b(2*i + 2+registerCount);
+    if (registers[i] < 128) {
+      int addr = 4*i + 2+registerCount;
+      registerValues[i] = readEEPROM32b(addr);
+    }
   }
   for (int i = 0; i < registerCount; i++) {
     handleRegisterChange(i);

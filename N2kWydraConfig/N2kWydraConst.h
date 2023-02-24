@@ -31,25 +31,26 @@
 #define N2KREG_ThrottleMinPos 13 // set by N2KRC_SetRegisterWithCurrent
 #define N2KREG_ThrottleMaxPos 14 // set by N2KRC_SetRegisterWithCurrent
 #define N2KREG_EngineReportFreq 15 // ms
-#define N2KREG_Throttle (128+16) // speed -100..0..100
-#define N2KREG_Gear (128+17) // 0-Idle, 1-Forward, -1-Reverse - read-only
+#define N2KREG_Gear (128+16) // 0-Idle, 1-Forward, -1-Reverse - read-only
+#define N2KREG_SetThrottle (128+17) // speed -100..0..100
 
 // N2KNODE_INDOOR_CONTROLLER
 // N2KNODE_OUTDOOR_CONTROLLER
-#define N2KREG_CtrlAutopilotStep 20 // 1-10
+#define N2KREG_CtrlAutopilotStep 20 // 1-5
 #define N2KREG_CtrlThrottleStep 21 // 1-10
 
 // N2KNODE_AUTOPILOT
-#define N2KCC_SetAutopilotOn (128+30) // 0-off, 1-onn
-#define N2KCC_SetAutopilotCourse (128+31) // course:0..359
-#define N2KCC_SetAutopilotTurnSpeed (128+32) // turnSpeed 0-default, 1-slow, 2-fast
-#define N2KCC_SetAutopilotRudderPosition (128+33) // rudder position to be set -100..0..100
+#define N2KREG_AutopilotCalibration (30) // rudder position to be set -100..0..100
+#define N2KREG_SetAutopilotState (128+30) // 0-off, 1-on compass, 2-on wind
+#define N2KREG_SetAutopilotTurnSpeed (128+31) // turnSpeed 0-default, 1-slow, 2-fast
+#define N2KREG_SetAutopilotRudderPosition (128+32) // rudder position to be set -100..0..100
+#define N2KREG_SetAutopilotCourse (128+33) // course:0..359
 
 // N2KNODE_BMS
 #define N2KREG_BMSCutOffVoltage 40 // arg 1: *0.01v
 #define N2KREG_BMSTurnOnVoltage 41 // arg 1: *0.01v
 #define N2KREG_BMSMsgFreq 42 // ms
-#define N2KNTF_BMSStatus (128+43) // arg 1: 0-disabled, 1-enabled, 2-disabled manually
+#define N2KREG_BMSStatus (128+43) // arg 1: 0-disabled, 1-enabled, 2-disabled manually
 
 // N2KNODE_POWER_MONITOR
 #define N2KREG_PowerMsgFreq 50 // ms
