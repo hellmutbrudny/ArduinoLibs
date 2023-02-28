@@ -1,4 +1,5 @@
 #include "SyncZone.h"
+#include "Arduino.h"
 
 bool SyncZoneSemaphore = 0;
 
@@ -10,7 +11,7 @@ void enterSyncZone() {
   }
   rp2040.resumeOtherCore();
   if (!isFree) {
-    while (semaphore == 1) { /* noop */ }
+    while (SyncZoneSemaphore == 1) { /* noop */ }
   }
 }
 

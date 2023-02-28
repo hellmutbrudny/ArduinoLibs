@@ -46,17 +46,17 @@ public:
   void setN2kRegisterCommand(tN2kMsg &N2kMsg, unsigned char command, unsigned char registerId, int32_t param=0);
   bool parseN2kRegisterCommand(const tN2kMsg &N2kMsg, unsigned char &command, unsigned char &registerId, int32_t &param);
   void sendN2kRegisterCommand(unsigned char command, unsigned char registerId, int32_t param=0);
-  void parseN2kMsessages();
+  void parseN2kMessages();
 
 // internal
   void handleN2kRegisterCommand(const tN2kMsg &N2kMsg);
   virtual void handleGetRegister(unsigned char registerId, int idx);
   virtual void handleSetRegister(unsigned char registerId, int32_t value, int idx);
   virtual void handleSetRegisterBySensor(unsigned char registerId, int idx);
-
-  virtual void handleN2kMsg(const tN2kMsg &N2kMsg) const {};
-  virtual void handleRegisterChange(unsigned char registerId) const {};
-  virtual int32_t sensorValueForReg(unsigned char registerId) const { return 0; };
+  virtual void handleRegisterValueInfo(unsigned char registerId, int32_t param) {};
+  virtual void handleOtherN2kMsg(const tN2kMsg &N2kMsg) {};
+  virtual void handleRegisterChange(unsigned char registerId, int32_t newValue) {};
+  virtual int32_t sensorValueForRegister(unsigned char registerId) { return 0; };
 
 // direct register array access
   int getRegisterIndex(unsigned char registerId);

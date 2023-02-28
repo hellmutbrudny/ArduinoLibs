@@ -75,12 +75,16 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
 }
 
 void tN2kRegisters::handleN2kRegisterCommand(const tN2kMsg &N2kMsg) {
-  if (N2kMsg.PGN == 128275) {
+  if (N2kMsg.PGN == 127501) {
     unsigned char command;
     unsigned char registerId;
     int32_t param;
     parseN2kRegisterCommand(N2kMsg, command, registerId, param);
     int idx = getRegisterIndex(registerId);
+    if (command == N2KRC_RegisterValueInfo) {
+      handleRegisterValueInfo(registerId, param);
+      return;
+    }
     if (idx >= 0) {
       switch (command) {
         case N2KRC_GetRegister:
@@ -98,7 +102,7 @@ void tN2kRegisters::handleN2kRegisterCommand(const tN2kMsg &N2kMsg) {
     }
   }
   // handle other N2k messages - override virtual method if needed
-  handleN2kMsg(N2kMsg);
+  handleOtherN2kMsg(N2kMsg);
 }
 
 void tN2kRegisters::handleGetRegister(unsigned char registerId, int idx) {
@@ -106,28 +110,30 @@ void tN2kRegisters::handleGetRegister(unsigned char registerId, int idx) {
 }
 
 void tN2kRegisters::handleSetRegister(unsigned char registerId, int32_t value, int idx) {
-  registerValues[idx] = value;
-  handleRegisterChange(registerId);
-  sendN2kRegisterCommand(N2KRC_RegisterValueInfo, registerId, registerValues[idx]);
-  if (registerId >= 128) {
+  if (registerId >= 128 && registerValues[idx] != value) {
     // Hihgest bit means that given register is for constantly changing operational data and is not persisted in EEPROM
-    writeEEPROM32b(2*idx + 2+registerCount, registerValues[idx]);
+    writeEEPROM32b(2*idx + 2+registerCount, value);
     #ifdef PSEUDO_EEPROM
     EEPROM.commit();
     #endif
   }
+  registerValues[idx] = value;
+  handleRegisterChange(registerId, registerValues[idx]);
+  sendN2kRegisterCommand(N2KRC_RegisterValueInfo, registerId, registerValues[idx]);
 }
 
 void tN2kRegisters::handleSetRegisterBySensor(unsigned char registerId, int idx) {
-  int32_t sensor = sensorValueForReg(registerId);
+  int32_t sensor = sensorValueForRegister(registerId);
   if (sensor > -1) {
-    registerValues[idx] = sensor;
-    handleRegisterChange(registerId);
+    if (registerValues[idx] != sensor) {
+      registerValues[idx] = sensor;
+      handleRegisterChange(registerId, registerValues[idx]);
+      writeEEPROM32b(2*idx + 2+registerCount, registerValues[idx]);
+      #ifdef PSEUDO_EEPROM
+      EEPROM.commit();
+      #endif
+    }
     sendN2kRegisterCommand(N2KRC_RegisterValueInfo, registerId, registerValues[idx]);
-    writeEEPROM32b(2*idx + 2+registerCount, registerValues[idx]);
-    #ifdef PSEUDO_EEPROM
-    EEPROM.commit();
-    #endif
   }
 }
 
@@ -159,7 +165,7 @@ bool tN2kRegisters::parseN2kRegisterCommand(const tN2kMsg &N2kMsg, unsigned char
     return parsed;
 }
 
-void tN2kRegisters::parseN2kMsessages() {
+void tN2kRegisters::parseN2kMessages() {
   N2K->ParseMessages();
 }
 
@@ -231,6 +237,8 @@ void tN2kRegisters::readRegistersFromEEPROM() {
     }
   }
   for (int i = 0; i < registerCount; i++) {
-    handleRegisterChange(i);
+    if (registers[i] < 128) {
+      handleRegisterChange(registers[i], registerValues[i]);
+    }
   }
 }

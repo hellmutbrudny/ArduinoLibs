@@ -45,6 +45,7 @@
 #define N2KREG_SetAutopilotTurnSpeed (128+31) // turnSpeed 0-default, 1-slow, 2-fast
 #define N2KREG_SetAutopilotRudderPosition (128+32) // rudder position to be set -100..0..100
 #define N2KREG_SetAutopilotCourse (128+33) // course:0..359
+#define N2KREG_SetAutopilotDriverState (128+34) // 0-idle, other-working with given signal
 
 // N2KNODE_BMS
 #define N2KREG_BMSCutOffVoltage 40 // arg 1: *0.01v
