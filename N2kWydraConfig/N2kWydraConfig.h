@@ -50,7 +50,7 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned char N2K_DEVICE_FUNCTION = 150;
   const unsigned char N2K_DEVICE_CLASS = 40;
   unsigned char REGISTERS_ARRAY[] = {N2KREG_AutopilotCalibration, N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, N2KREG_SetAutopilotDriverState, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0, 0, 0};
   #define OVER_handleRegisterChange
   #define OVER_handleOtherN2kMsg
 #elif N2KNODE_DEVICE == N2KNODE_BMS

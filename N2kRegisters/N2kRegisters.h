@@ -50,9 +50,9 @@ public:
 
 // internal
   void handleN2kRegisterCommand(const tN2kMsg &N2kMsg);
-  virtual void handleGetRegister(unsigned char registerId, int idx);
-  virtual void handleSetRegister(unsigned char registerId, int32_t value, int idx);
-  virtual void handleSetRegisterBySensor(unsigned char registerId, int idx);
+  void handleGetRegister(unsigned char registerId, int idx);
+  void handleSetRegister(unsigned char registerId, int32_t value, int idx);
+  void handleSetRegisterBySensor(unsigned char registerId, int idx);
   virtual void handleRegisterValueInfo(unsigned char registerId, int32_t param) {};
   virtual void handleOtherN2kMsg(const tN2kMsg &N2kMsg) {};
   virtual void handleRegisterChange(unsigned char registerId, int32_t newValue) {};
