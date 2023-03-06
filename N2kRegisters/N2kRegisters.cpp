@@ -207,12 +207,23 @@ int32_t tN2kRegisters::getRegisterValue(unsigned char registerId) {
   return -1;
 }
 
-void tN2kRegisters::setRegisterValue(unsigned char registerId, int32_t value) {
+bool tN2kRegisters::setRegisterValue(unsigned char registerId, int32_t value) {
   int idx = getRegisterIndex(registerId);
-  if (idx >= 0) {
+  if (idx >= 0 && registerValues[idx] != value) {
+    if (registerId < 128 && registerValues[idx] != value) {
+      // Hihgest bit means that given register is for constantly changing operational data and is not persisted in EEPROM
+      writeEEPROM32b(4*idx + 2+registerCount, value);
+      #ifdef PSEUDO_EEPROM
+      EEPROM.commit();
+      #endif
+    }
     registerValues[idx] = value;
+    sendN2kRegisterCommand(N2KRC_RegisterValueInfo, registerId, registerValues[idx]);
+    return true;
   }
+  return false;
 }
+
 void tN2kRegisters::saveRegistersToEEPROM() {
   if (registerCount == 0) {
     return;

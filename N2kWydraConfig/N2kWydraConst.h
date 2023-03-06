@@ -40,18 +40,21 @@
 #define N2KREG_CtrlThrottleStep 21 // 1-10
 
 // N2KNODE_AUTOPILOT
-#define N2KREG_AutopilotCalibration (30) // rudder position to be set -100..0..100
-#define N2KREG_SetAutopilotState (128+30) // 0-off, 1-on compass, 2-on wind
+#define N2KREG_AutopilotCalibrationP (30) // factor P for PID (x100)
+#define N2KREG_AutopilotCalibrationI (31) // factor I for PID (x100)
+#define N2KREG_AutopilotCalibrationD (32) // factor D for PID (x100)
+#define N2KREG_SetAutopilotState (128+30) // 0-off, 1-on compass, 2-on wind, 3-stalled
 #define N2KREG_SetAutopilotTurnSpeed (128+31) // turnSpeed 0-default, 1-slow, 2-fast
 #define N2KREG_SetAutopilotRudderPosition (128+32) // rudder position to be set -100..0..100
 #define N2KREG_SetAutopilotCourse (128+33) // course:0..359
-#define N2KREG_SetAutopilotDriverState (128+34) // 0-idle, other-working with given signal
 
 // N2KNODE_BMS
-#define N2KREG_BMSCutOffVoltage 40 // arg 1: *0.01v
-#define N2KREG_BMSTurnOnVoltage 41 // arg 1: *0.01v
-#define N2KREG_BMSMsgFreq 42 // ms
-#define N2KREG_BMSStatus (128+43) // arg 1: 0-disabled, 1-enabled, 2-disabled manually
+#define N2KREG_BMSCutOffVoltage 40 // arg 1: (x1000)
+#define N2KREG_BMSTurnOnVoltage 41 // arg 1: (x1000)
+#define N2KREG_BMSAlertLowVoltage 42 // arg 1: (x1000)
+#define N2KREG_BMSMsgFreq 43 // ms
+#define N2KREG_BMSMode (128+44) // arg 1: 0-disabled, 1-enabled, 2-disabled manually, 3-enabled manually
+#define N2KREG_BMSError (128+45) // arg 1: error code 0-ok, 1-underflow, 2-overflow, 3-i2c, 4-in progress, 5-timeout, 10-low voltage alert
 
 // N2KNODE_POWER_MONITOR
 #define N2KREG_PowerMsgFreq 50 // ms

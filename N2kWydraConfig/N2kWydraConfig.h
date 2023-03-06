@@ -45,12 +45,12 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   #define OVER_sensorValueForReg
 #elif N2KNODE_DEVICE == N2KNODE_AUTOPILOT
   // CANBed - Arduino CAN-Bus RP2040
-  const char * N2K_DEVICE_NAME = "Wydra Autopilot";
+  const char * N2K_DEVICE_NAME = "Wydra Autopilot Driver";
   const unsigned long N2K_DEVICE_SERIAL = 9003;
   const unsigned char N2K_DEVICE_FUNCTION = 150;
   const unsigned char N2K_DEVICE_CLASS = 40;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_AutopilotCalibration, N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, N2KREG_SetAutopilotDriverState, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0, 0, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_AutopilotCalibrationP, N2KREG_AutopilotCalibrationI, N2KREG_AutopilotCalibrationD, N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {1000, 1000, 1000, 0, 0, 0, 0};
   #define OVER_handleRegisterChange
   #define OVER_handleOtherN2kMsg
 #elif N2KNODE_DEVICE == N2KNODE_BMS
@@ -59,8 +59,8 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9004;
   const unsigned char N2K_DEVICE_FUNCTION = 170;
   const unsigned char N2K_DEVICE_CLASS = 35;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSMsgFreq, N2KREG_BMSStatus, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {365, 350, 5000, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSAlertLowVoltage, N2KREG_BMSMsgFreq, N2KREG_BMSMode, N2KREG_BMSError, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {3600, 3370, 3225, 5000, 0, 0};
   #define OVER_handleRegisterChange
 #elif N2KNODE_DEVICE == N2KNODE_GYROWEATHER_SENSOR
   // Teensy 3.2

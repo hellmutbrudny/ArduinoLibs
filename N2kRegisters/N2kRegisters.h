@@ -61,7 +61,7 @@ public:
 // direct register array access
   int getRegisterIndex(unsigned char registerId);
   int32_t getRegisterValue(unsigned char registerId);
-  void setRegisterValue(unsigned char registerId, int32_t value);
+  bool setRegisterValue(unsigned char registerId, int32_t value);
 
 // EEPROM handling
   uint16_t readEEPROM32b(int addr);
