@@ -1,10 +1,10 @@
 /*
  *  Copyright (C) 2014 Bernhard Schneider <bernhard@neaptide.org>
- *   
+ *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public License
  *  version 3 as published by the Free Software Foundation.
- * 
+ *
  */
 
 #include <Arduino.h>
@@ -14,17 +14,22 @@ MCP3424::MCP3424 (uint8_t address): addr(address) { }
 
 MCP3424::MCP3424 (PinType adr0, PinType adr1): addr(pin_addr[adr0*3+adr1]) {}
 
+void MCP3424::begin(TwoWire *wire) {
+  twoWire = wire;
+  twoWire->begin();
+}
+
 uint8_t MCP3424::generalCall(GCall_t call) const {
-    Wire.beginTransmission(0x00);
-    Wire.write(call);
-    return Wire.endTransmission();
+    twoWire->beginTransmission(0x00);
+    twoWire->write(call);
+    return twoWire->endTransmission();
 }
 
 uint8_t MCP3424::writeConfReg(Channel ch) {
     cwrite.reg = creg[ch].reg;
-    Wire.beginTransmission(addr);
-    Wire.write(cwrite.reg);
-    return Wire.endTransmission();
+    twoWire->beginTransmission(addr);
+    twoWire->write(cwrite.reg);
+    return twoWire->endTransmission();
 }
 
 uint8_t MCP3424::startNewConversion(Channel ch) {
@@ -36,15 +41,15 @@ uint8_t MCP3424::startNewConversion(Channel ch) {
 Gain MCP3424::findGain(double value) const {
 
     uint8_t g;
-    
+
     value = abs(value);
-    
-    for(g = GAINx1; g <= GAINx8; g++) 
-      if (value * (1<<(g+1)) >= 2.048) 
+
+    for(g = GAINx1; g <= GAINx8; g++)
+      if (value * (1<<(g+1)) >= 2.048)
         return (Gain)g;
-        
+
     return GAINx8;
-}    
+}
 
 ConvStatus MCP3424::read(Channel ch, double& value, int32_t &raw, bool blocking) {
 
@@ -74,20 +79,20 @@ ConvStatus MCP3424::nb_read(Channel ch, double & value, int32_t &raw) {
       else
         startNewConversion(ch);
 
-    Wire.requestFrom(addr, (uint8_t)((cwrite.bits.res == R18B)?4:3));
+    twoWire->requestFrom(addr, (uint8_t)((cwrite.bits.res == R18B)?4:3));
 
-    if (Wire.available() < ((cwrite.bits.res == R18B)?4:3))
+    if (twoWire->available() < ((cwrite.bits.res == R18B)?4:3))
       return R_I2C;
 
-    b2 = Wire.read();
-    b3 = Wire.read();
+    b2 = twoWire->read();
+    b3 = twoWire->read();
 
     if (creg[ch].bits.res == R18B)
-      b4 = Wire.read();
+      b4 = twoWire->read();
 
-    cread.reg = Wire.read();
+    cread.reg = twoWire->read();
 
-    Wire.endTransmission();
+    twoWire->endTransmission();
 
     if (cread.bits.rdy == 1)
       return R_IN_PROGRESS;
@@ -106,4 +111,3 @@ ConvStatus MCP3424::nb_read(Channel ch, double & value, int32_t &raw) {
 
     return R_OK;
 }
-

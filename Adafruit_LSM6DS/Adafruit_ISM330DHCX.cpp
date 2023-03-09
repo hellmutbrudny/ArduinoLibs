@@ -22,7 +22,7 @@ bool Adafruit_ISM330DHCX::_init(int32_t sensor_id) {
 
   uint8_t chipid = chipID();
   Serial.print("Adafruit_ISM330DHCX ChipID = ");
-  Serial.println(chipid);
+  Serial.println(chipid, HEX);
 
   if (chipid != ISM330DHCX_CHIP_ID) {
     return false;

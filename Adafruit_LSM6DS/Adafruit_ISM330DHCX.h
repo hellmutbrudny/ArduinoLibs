@@ -20,7 +20,7 @@
 
 #include "Adafruit_LSM6DSOX.h"
 
-#define ISM330DHCX_CHIP_ID 0x29 ///< ISM330DHCX default device id from WHOAMI - 0x6B fo I2C
+#define ISM330DHCX_CHIP_ID 0x6B //< ISM330DHCX default device id from WHOAMI - 0x6B fo I2C
 
 /*!
  *    @brief  Class that stores state and functions for interacting with
