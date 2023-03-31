@@ -1,15 +1,20 @@
 #ifndef _PicoSyncZone_h_
 #define _PicoSyncZone_h_
+#include <pico/multicore.h>
 
 class PicoSyncZone {
   public:
-    void enter();
-    void exit();
-
+    PicoSyncZone() {
+      mutex_init(&_mutex);
+    }
+    void enter() {
+      mutex_enter_blocking(&_mutex);
+    }
+    void exit() {
+      mutex_exit(&_mutex);
+    }
   private:
-    bool busy = false;
-    int coresWaiting = 0;
-    bool atomicTestAndSet();
+    mutex_t _mutex;
 };
 
 #endif
