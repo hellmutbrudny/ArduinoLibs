@@ -456,6 +456,8 @@ protected:
     }
     bool IsActiveNode() { return (N2kMode==N2km_NodeOnly || N2kMode==N2km_ListenAndNode); }
     bool IsValidDevice(int iDev) const { return (iDev>=0 && iDev<DeviceCount ); }
+
+public:
     bool IsReadyToSend() const {
       return ( (DeviceReady || dbMode!=dm_None) &&
                (N2kMode!=N2km_ListenOnly) &&
@@ -464,7 +466,7 @@ protected:
              );
     }
 
-
+protected:
 #if !defined(N2K_NO_ISO_MULTI_PACKET_SUPPORT)
     // Transport protocol handlers
     bool TestHandleTPMessage(unsigned long PGN, unsigned char Source, unsigned char Destination,

@@ -39,8 +39,8 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9002;
   const unsigned char N2K_DEVICE_FUNCTION = 140;
   const unsigned char N2K_DEVICE_CLASS = 50;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_GearForwardPos, N2KREG_GearIdlePos, N2KREG_GearReversePos, N2KREG_ThrottleMinPos, N2KREG_ThrottleMaxPos, N2KREG_EngineReportFreq, N2KREG_Gear, N2KREG_SetThrottle, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0, 0, 1500, 0, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_SteppersSpeed, N2KREG_GearIdlePos, N2KREG_GearReversePos, N2KREG_ThrottleMaxPos, N2KREG_EngineReportFreq, N2KREG_Gear, N2KREG_SetThrottle, N2KREG_EngineModuleState, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {200, 750, 1500, 2500, 4000, 0, 0, 0};
   #define OVER_handleRegisterChange
   #define OVER_sensorValueForReg
 #elif N2KNODE_DEVICE == N2KNODE_AUTOPILOT
