@@ -15,6 +15,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
                                       unsigned char deviceClass,
                                       uint8_t busSource,
                                       void (*msgHandler)(const tN2kMsg &N2kMsg)) {
+  Serial.println("initN2kRegisters");
   // initalize NMEA2000 object
   N2K->SetProductInformation(modelSerialCode, // Manufacturer's Model serial code
                                  registration, // Manufacturer's product code
@@ -39,6 +40,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
   N2K->Open();
 
   if (registerCount == 0) {
+    Serial.println("registerCount == 0");
     return;
   }
 
@@ -46,6 +48,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
     EEPROM.begin(256);
   #endif
 
+  Serial.println("init EEPROM");
   // Check if EEPROM structure is relevant to Registers
   byte check0 = EEPROM.read(0);
   byte check1 = EEPROM.read(1);
@@ -63,6 +66,8 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
     }
   }
 
+  Serial.println("save defaults to EEPROM");
+  //Serial.printf("Init registers to defaults. registerCount=%d\n", registerCount);
   // Save default values to EEPROM (initialization)
   EEPROM.write(0, 'X');
   EEPROM.write(1, registerCount);
@@ -233,20 +238,24 @@ void tN2kRegisters::saveRegistersToEEPROM() {
       int addr = 4*i + 2+registerCount;
       int32_t current = readEEPROM32b(addr);
       if (current != registerValues[i]) {
+        //Serial.printf("EEPROM write %d:%d->%d\n", i, addr, registerValues[i]);
         writeEEPROM32b(addr, registerValues[i]);
       }
     }
   }
   #ifdef PSEUDO_EEPROM
-    EEPROM.commit();
+  //Serial.printf("EEPROM.commit\n");
+  EEPROM.commit();
   #endif
 }
 
 void tN2kRegisters::readRegistersFromEEPROM() {
+  Serial.println("readRegistersFromEEPROM");
   for (int i = 0; i < registerCount; i++) {
     if (registers[i] < 128) {
       int addr = 4*i + 2+registerCount;
       registerValues[i] = readEEPROM32b(addr);
+      //Serial.printf("EEPROM read %d:%d=%d\n", i, addr, registerValues[i]);
     }
   }
   for (int i = 0; i < registerCount; i++) {

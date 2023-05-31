@@ -20,7 +20,7 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned char N2K_DEVICE_FUNCTION = 155;
   const unsigned char N2K_DEVICE_CLASS = 40;
   unsigned char REGISTERS_ARRAY[] = {N2KREG_RudderMaxPort, N2KREG_RudderMaxSter, N2KREG_RudderMsgFreq, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {80, 485, 1000};
+  int32_t REGISTER_VALUES_ARRAY[] = {100, 900, 1000};
   #define OVER_handleRegisterChange
   #define OVER_sensorValueForReg
 #elif N2KNODE_DEVICE == N2KNODE_POWER_MONITOR

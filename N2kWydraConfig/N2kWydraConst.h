@@ -20,9 +20,9 @@
 // 128+ means it's not persisted - constantly changing operation data
 
 // N2KNODE_RUDDER_SENSOR
-#define N2KREG_RudderMaxPort 0 // raw ADC value - set by N2KRC_SetRegisterWithCurrent
-#define N2KREG_RudderMaxSter 1 // raw ADC value - set by N2KRC_SetRegisterWithCurrent
-#define N2KREG_RudderMsgFreq 2 // ms
+#define N2KREG_RudderMaxPort 1 // raw ADC value - set by N2KRC_SetRegisterWithCurrent
+#define N2KREG_RudderMaxSter 2 // raw ADC value - set by N2KRC_SetRegisterWithCurrent
+#define N2KREG_RudderMsgFreq 3 // ms
 
 // N2KNODE_ENGINE_DRIVER
 #define N2KREG_SteppersSpeed 10 // steps per second
