@@ -19,8 +19,8 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9000; // Unique, 21 bit resolution, max 2097151. Each device from same manufacturer should have unique number.
   const unsigned char N2K_DEVICE_FUNCTION = 155;
   const unsigned char N2K_DEVICE_CLASS = 40;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_RudderMaxPort, N2KREG_RudderMaxSter, N2KREG_RudderMsgFreq, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {100, 900, 1000};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_RudderMsgFreq, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {1000};
   #define OVER_handleRegisterChange
   #define OVER_sensorValueForReg
 #elif N2KNODE_DEVICE == N2KNODE_POWER_MONITOR
@@ -49,10 +49,11 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9003;
   const unsigned char N2K_DEVICE_FUNCTION = 150;
   const unsigned char N2K_DEVICE_CLASS = 40;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_AutopilotCalibrationP, N2KREG_AutopilotCalibrationI, N2KREG_AutopilotCalibrationD, N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {1000, 1000, 1000, 0, 0, 0, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0};
   #define OVER_handleRegisterChange
   #define OVER_handleOtherN2kMsg
+  #define OVER_handleRegisterValueInfo
 #elif N2KNODE_DEVICE == N2KNODE_BMS
   // CANBed - Arduino CAN-Bus RP2040
   const char * N2K_DEVICE_NAME = "Wydra BMS";

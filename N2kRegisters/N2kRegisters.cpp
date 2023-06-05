@@ -39,8 +39,9 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
   N2K->SetMsgHandler(msgHandler);
   N2K->Open();
 
+  //Serial.printf("registerCount=%d\n", registerCount);
   if (registerCount == 0) {
-    Serial.println("registerCount == 0");
+    //Serial.println("registerCount == 0");
     return;
   }
 
@@ -48,7 +49,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
     EEPROM.begin(256);
   #endif
 
-  Serial.println("init EEPROM");
+  //Serial.println("init EEPROM");
   // Check if EEPROM structure is relevant to Registers
   byte check0 = EEPROM.read(0);
   byte check1 = EEPROM.read(1);
@@ -86,6 +87,7 @@ void tN2kRegisters::handleN2kRegisterCommand(const tN2kMsg &N2kMsg) {
     unsigned char p_registerId;
     int32_t p_param;
     if (parseN2kRegisterCommand(N2kMsg, p_command, p_registerId, p_param)) {
+      //Serial.printf("register command parsed %d->%d\n", p_command, p_registerId);
       if (p_command == N2KRC_RegisterValueInfo) {
         handleRegisterValueInfo(p_registerId, p_param);
         return;
@@ -250,7 +252,7 @@ void tN2kRegisters::saveRegistersToEEPROM() {
 }
 
 void tN2kRegisters::readRegistersFromEEPROM() {
-  Serial.println("readRegistersFromEEPROM");
+  //Serial.println("readRegistersFromEEPROM");
   for (int i = 0; i < registerCount; i++) {
     if (registers[i] < 128) {
       int addr = 4*i + 2+registerCount;

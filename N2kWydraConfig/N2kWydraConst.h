@@ -20,8 +20,6 @@
 // 128+ means it's not persisted - constantly changing operation data
 
 // N2KNODE_RUDDER_SENSOR
-#define N2KREG_RudderMaxPort 1 // raw ADC value - set by N2KRC_SetRegisterWithCurrent
-#define N2KREG_RudderMaxSter 2 // raw ADC value - set by N2KRC_SetRegisterWithCurrent
 #define N2KREG_RudderMsgFreq 3 // ms
 
 // N2KNODE_ENGINE_DRIVER
@@ -40,9 +38,6 @@
 #define N2KREG_CtrlThrottleStep 21 // 1-10
 
 // N2KNODE_AUTOPILOT
-#define N2KREG_AutopilotCalibrationP (30) // factor P for PID (x100)
-#define N2KREG_AutopilotCalibrationI (31) // factor I for PID (x100)
-#define N2KREG_AutopilotCalibrationD (32) // factor D for PID (x100)
 #define N2KREG_SetAutopilotState (128+30) // 0-off, 1-on compass, 2-on wind, 3-stalled
 #define N2KREG_SetAutopilotTurnSpeed (128+31) // turnSpeed 0-default, 1-slow, 2-fast
 #define N2KREG_SetAutopilotRudderPosition (128+32) // rudder position to be set -100..0..100
