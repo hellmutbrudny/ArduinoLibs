@@ -7,6 +7,8 @@
 #define PSEUDO_EEPROM
 #endif
 
+void(* rebootTheBoard) (void) = 0;
+
 void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
                                       uint16_t registration,
                                       const char *deviceName,
@@ -82,6 +84,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
 
 
 void tN2kRegisters::handleN2kRegisterCommand(const tN2kMsg &N2kMsg) {
+  //Serial.printf("Received PGN %d\n", N2kMsg.PGN);
   if (N2kMsg.PGN == 127501) {
     unsigned char p_command;
     unsigned char p_registerId;
@@ -159,6 +162,7 @@ void tN2kRegisters::setN2kRegisterCommand(tN2kMsg &N2kMsg, unsigned char command
 
 void tN2kRegisters::sendN2kRegisterCommand(unsigned char command, unsigned char registerId, int32_t param) {
   tN2kMsg N2kMsg;
+  //Serial.printf("sending command %d: %d=%d\n", command, registerId, param);
   setN2kRegisterCommand(N2kMsg, command, registerId, param);
   sendN2kMsg(N2kMsg);
 }
@@ -176,10 +180,23 @@ bool tN2kRegisters::parseN2kRegisterCommand(const tN2kMsg &N2kMsg, unsigned char
 
 void tN2kRegisters::parseN2kMessages() {
   N2K->ParseMessages();
+  if (++parseCounter >= 1000) {
+    parseCounter = 0;
+    notSendCounter = 0;
+  }
 }
 
 void tN2kRegisters::sendN2kMsg(const tN2kMsg &N2kMsg) {
-  N2K->SendMsg(N2kMsg);
+  bool res = N2K->SendMsg(N2kMsg);
+  if (!res) {
+    Serial.print(millis());
+    Serial.print(" Send error: ");
+    Serial.println(notSendCounter);
+    if (++notSendCounter >= 10) {
+        Serial.println("Too many send errors - reboot!!!");
+        rebootTheBoard();    
+    }
+  }
 }
 
 uint16_t tN2kRegisters::readEEPROM32b(int addr) {

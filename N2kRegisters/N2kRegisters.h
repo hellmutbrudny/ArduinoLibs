@@ -24,6 +24,8 @@ protected:
   unsigned char registerCount = 0;
   unsigned char *registers;
   int32_t *registerValues;
+  int notSendCounter = 0;
+  int parseCounter = 0;
 
 public:
   tN2kRegisters(tNMEA2000 *N2K, unsigned char *registers, int32_t *initialValues) {
