@@ -248,6 +248,12 @@ bool tN2kRegisters::setRegisterValue(unsigned char registerId, int32_t value) {
   return false;
 }
 
+void tN2kRegisters::setRegisterRawValue(int idx, int32_t value) {
+  if (idx >= 0 && registerValues[idx] != value) {
+    registerValues[idx] = value;
+  }
+}
+
 void tN2kRegisters::saveRegistersToEEPROM() {
   if (registerCount == 0) {
     return;

@@ -60,8 +60,8 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9004;
   const unsigned char N2K_DEVICE_FUNCTION = 170;
   const unsigned char N2K_DEVICE_CLASS = 35;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSAlertLowVoltage, N2KREG_BMSMsgFreq, N2KREG_BMSFactor0, N2KREG_BMSFactor1, N2KREG_BMSFactor2, N2KREG_BMSFactor3, N2KREG_BMSMode, N2KREG_BMSError, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {3600, 3370, 3225, 5000, 2000, 4000, 6000, 8000, 0, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSAlertLowVoltage, N2KREG_BMSMsgFreq, N2KREG_BMSFactor0, N2KREG_BMSFactor1, N2KREG_BMSFactor2, N2KREG_BMSFactor3, N2KREG_BMSMode, N2KREG_BMSError, N2KREG_BMSRaw0, N2KREG_BMSRaw1, N2KREG_BMSRaw2, N2KREG_BMSRaw3, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {3600, 3370, 3225, 5000, 2000, 4000, 6000, 8000, 0, 0, 0, 0, 0, 0};
   #define OVER_handleRegisterChange
 #elif N2KNODE_DEVICE == N2KNODE_GYROWEATHER_SENSOR
   // Teensy 3.2

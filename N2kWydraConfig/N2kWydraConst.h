@@ -54,6 +54,10 @@
 #define N2KREG_BMSFactor3 47 // (x1000)
 #define N2KREG_BMSMode (128+40) // arg 1: 0-disabled, 1-enabled, 2-disabled manually, 3-enabled manually
 #define N2KREG_BMSError (128+41) // arg 1: error code 0-ok, 1-underflow, 2-overflow, 3-i2c, 4-in progress, 5-timeout, 10-low voltage alert
+#define N2KREG_BMSRaw0 (128+42)
+#define N2KREG_BMSRaw1 (128+43)
+#define N2KREG_BMSRaw2 (128+44)
+#define N2KREG_BMSRaw3 (128+45)
 
 // N2KNODE_POWER_MONITOR
 #define N2KREG_PowerMsgFreq 50 // ms
