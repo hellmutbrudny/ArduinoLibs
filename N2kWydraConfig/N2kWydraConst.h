@@ -16,7 +16,7 @@
 
 /////
 // Registers
-// By defalt they store configuration value in EEPROM
+// By default they store configuration value in EEPROM
 // 128+ means it's not persisted - constantly changing operation data
 
 // N2KNODE_RUDDER_SENSOR
@@ -24,13 +24,11 @@
 
 // N2KNODE_ENGINE_DRIVER
 #define N2KREG_SteppersSpeed 10 // steps per second
-#define N2KREG_GearIdlePos 11 // set by N2KRC_SetRegisterWithCurrent
-#define N2KREG_GearReversePos 12 // set by N2KRC_SetRegisterWithCurrent
 #define N2KREG_ThrottleMaxPos 14 // set by N2KRC_SetRegisterWithCurrent
 #define N2KREG_EngineReportFreq 15 // ms
-#define N2KREG_Gear (128+16) // 0-Idle, 1-Forward, -1-Reverse - read-only
+#define N2KREG_Gear (128+16) // Reverse 5, Changing rev to idle 1, Idle 7, Changing fwd to idle 2, Forward 6 (read only)
 #define N2KREG_SetThrottle (128+17) // speed -100..0..100
-#define N2KREG_EngineModuleState (128+18) // 0 - ok, 1 - failed to reset throttle stepper, 2 - failed to reset gear stepper
+#define N2KREG_EngineModuleState (128+18) // 0 - ok, 1 - failed to reset throttle stepper, 2 - failed to reset gear stepper (read only)
 
 // N2KNODE_INDOOR_CONTROLLER
 // N2KNODE_OUTDOOR_CONTROLLER
