@@ -141,6 +141,15 @@ void initRegisters() {
 }
 
 #ifdef ARDUINO_ARCH_RP2040
+void switchNMEAToSPI0(int rx, int tx, int sck, int cs) {
+  tNMEA2000_mcp* N2kMCP = (tNMEA2000_mcp*)&NMEA2000;
+  N2kMCP->SetSPI(&SPI);
+  SPI.setCS(cs);
+  SPI.setRX(rx);
+  SPI.setTX(tx);
+  SPI.setSCK(sck);
+}
+
 void switchNMEAToSPI1(int rx, int tx, int sck, int cs) {
   tNMEA2000_mcp* N2kMCP = (tNMEA2000_mcp*)&NMEA2000;
   N2kMCP->SetSPI(&SPI1);
