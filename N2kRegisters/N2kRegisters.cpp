@@ -17,7 +17,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
                                       unsigned char deviceClass,
                                       uint8_t busSource,
                                       void (*msgHandler)(const tN2kMsg &N2kMsg)) {
-  Serial.println("initN2kRegisters");
+  if (Serial) Serial.println("initN2kRegisters");
   // initalize NMEA2000 object
   N2K->SetProductInformation(modelSerialCode, // Manufacturer's Model serial code
                                  registration, // Manufacturer's product code
@@ -69,7 +69,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
     }
   }
 
-  Serial.println("save defaults to EEPROM");
+  if (Serial) Serial.println("save defaults to EEPROM");
   //Serial.printf("Init registers to defaults. registerCount=%d\n", registerCount);
   // Save default values to EEPROM (initialization)
   EEPROM.write(0, 'X');
@@ -188,12 +188,15 @@ void tN2kRegisters::parseN2kMessages() {
 
 void tN2kRegisters::sendN2kMsg(const tN2kMsg &N2kMsg) {
   bool res = N2K->SendMsg(N2kMsg);
-  if (!res) {
-    Serial.print(millis());
-    Serial.print(" Send error: ");
-    Serial.println(notSendCounter);
+  if (!res && millis() > 5000) {
+    // Do not count errors for the first 5s - give device time to start connection
+    if (Serial) {
+        Serial.print(millis());
+        Serial.print(" Send error: ");
+        Serial.println(notSendCounter);
+    }
     if (++notSendCounter >= 10) {
-        Serial.println("Too many send errors - reboot!!!");
+        if (Serial) Serial.println("Too many send errors - reboot!!!");
         rebootTheBoard();    
     }
   }
