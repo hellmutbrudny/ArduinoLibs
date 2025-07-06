@@ -27,7 +27,7 @@
 #define N2KREG_ThrottleMaxPos 14 // set by N2KRC_SetRegisterWithCurrent
 #define N2KREG_EngineReportFreq 15 // ms
 #define N2KREG_Gear (128+16) // Reverse 5, Changing rev to idle 1, Idle 7, Changing fwd to idle 2, Forward 6 (read only)
-#define N2KREG_SetThrottle (128+17) // speed -100..0..100
+#define N2KREG_SetThrottle (128+17) // speed -100..0..100 or 1000..1100 to set throttle on idle gear
 #define N2KREG_EngineModuleState (128+18) // 0 - ok, 1 - failed to reset throttle stepper, 2 - failed to reset gear stepper (read only)
 
 // N2KNODE_INDOOR_CONTROLLER
