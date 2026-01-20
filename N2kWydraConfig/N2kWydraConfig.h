@@ -89,7 +89,7 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   #define OVER_handleRegisterChange
   #define OVER_handleRegisterValueInfo
 #elif N2KNODE_DEVICE == N2KNODE_DATA_COLLECTOR
-  // Raspberry Pi CM4
+  // Odroid
   const char * N2K_DEVICE_NAME = "Wydra Data Collector";
   const unsigned long N2K_DEVICE_SERIAL = 9008;
   const unsigned char N2K_DEVICE_FUNCTION = 140;
