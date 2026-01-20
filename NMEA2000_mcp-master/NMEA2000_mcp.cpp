@@ -181,6 +181,7 @@ bool tNMEA2000_mcp::CANOpen() {
     }
 
     CanInUse=IsOpen;
+    // Serial.printf("MCP is open: %i\n", IsOpen);
     return IsOpen;
 }
 

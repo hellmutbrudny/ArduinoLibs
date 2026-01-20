@@ -7,6 +7,8 @@
 #define PSEUDO_EEPROM
 #endif
 
+void(* rebootTheBoard) (void) = 0;
+
 void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
                                       uint16_t registration,
                                       const char *deviceName,
@@ -15,6 +17,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
                                       unsigned char deviceClass,
                                       uint8_t busSource,
                                       void (*msgHandler)(const tN2kMsg &N2kMsg)) {
+  if (Serial) Serial.println("initN2kRegisters");
   // initalize NMEA2000 object
   N2K->SetProductInformation(modelSerialCode, // Manufacturer's Model serial code
                                  registration, // Manufacturer's product code
@@ -38,7 +41,9 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
   N2K->SetMsgHandler(msgHandler);
   N2K->Open();
 
+  //Serial.printf("registerCount=%d\n", registerCount);
   if (registerCount == 0) {
+    //Serial.println("registerCount == 0");
     return;
   }
 
@@ -46,6 +51,7 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
     EEPROM.begin(256);
   #endif
 
+  //Serial.println("init EEPROM");
   // Check if EEPROM structure is relevant to Registers
   byte check0 = EEPROM.read(0);
   byte check1 = EEPROM.read(1);
@@ -63,6 +69,8 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
     }
   }
 
+  if (Serial) Serial.println("save defaults to EEPROM");
+  //Serial.printf("Init registers to defaults. registerCount=%d\n", registerCount);
   // Save default values to EEPROM (initialization)
   EEPROM.write(0, 'X');
   EEPROM.write(1, registerCount);
@@ -76,11 +84,13 @@ void tN2kRegisters::initN2kRegisters(const char *modelSerialCode,
 
 
 void tN2kRegisters::handleN2kRegisterCommand(const tN2kMsg &N2kMsg) {
+  //Serial.printf("Received PGN %d\n", N2kMsg.PGN);
   if (N2kMsg.PGN == 127501) {
     unsigned char p_command;
     unsigned char p_registerId;
     int32_t p_param;
     if (parseN2kRegisterCommand(N2kMsg, p_command, p_registerId, p_param)) {
+      //Serial.printf("register command parsed %d->%d\n", p_command, p_registerId);
       if (p_command == N2KRC_RegisterValueInfo) {
         handleRegisterValueInfo(p_registerId, p_param);
         return;
@@ -152,6 +162,7 @@ void tN2kRegisters::setN2kRegisterCommand(tN2kMsg &N2kMsg, unsigned char command
 
 void tN2kRegisters::sendN2kRegisterCommand(unsigned char command, unsigned char registerId, int32_t param) {
   tN2kMsg N2kMsg;
+  //Serial.printf("sending command %d: %d=%d\n", command, registerId, param);
   setN2kRegisterCommand(N2kMsg, command, registerId, param);
   sendN2kMsg(N2kMsg);
 }
@@ -169,10 +180,26 @@ bool tN2kRegisters::parseN2kRegisterCommand(const tN2kMsg &N2kMsg, unsigned char
 
 void tN2kRegisters::parseN2kMessages() {
   N2K->ParseMessages();
+  if (++parseCounter >= 1000) {
+    parseCounter = 0;
+    notSendCounter = 0;
+  }
 }
 
 void tN2kRegisters::sendN2kMsg(const tN2kMsg &N2kMsg) {
-  N2K->SendMsg(N2kMsg);
+  bool res = N2K->SendMsg(N2kMsg);
+  if (!res && millis() > 5000) {
+    // Do not count errors for the first 5s - give device time to start connection
+    if (Serial) {
+        Serial.print(millis());
+        Serial.print(" Send error: ");
+        Serial.println(notSendCounter);
+    }
+    if (++notSendCounter >= 10) {
+        if (Serial) Serial.println("Too many send errors - reboot!!!");
+        rebootTheBoard();    
+    }
+  }
 }
 
 uint16_t tN2kRegisters::readEEPROM32b(int addr) {
@@ -224,6 +251,12 @@ bool tN2kRegisters::setRegisterValue(unsigned char registerId, int32_t value) {
   return false;
 }
 
+void tN2kRegisters::setRegisterRawValue(int idx, int32_t value) {
+  if (idx >= 0 && registerValues[idx] != value) {
+    registerValues[idx] = value;
+  }
+}
+
 void tN2kRegisters::saveRegistersToEEPROM() {
   if (registerCount == 0) {
     return;
@@ -233,20 +266,24 @@ void tN2kRegisters::saveRegistersToEEPROM() {
       int addr = 4*i + 2+registerCount;
       int32_t current = readEEPROM32b(addr);
       if (current != registerValues[i]) {
+        //Serial.printf("EEPROM write %d:%d->%d\n", i, addr, registerValues[i]);
         writeEEPROM32b(addr, registerValues[i]);
       }
     }
   }
   #ifdef PSEUDO_EEPROM
-    EEPROM.commit();
+  //Serial.printf("EEPROM.commit\n");
+  EEPROM.commit();
   #endif
 }
 
 void tN2kRegisters::readRegistersFromEEPROM() {
+  //Serial.println("readRegistersFromEEPROM");
   for (int i = 0; i < registerCount; i++) {
     if (registers[i] < 128) {
       int addr = 4*i + 2+registerCount;
       registerValues[i] = readEEPROM32b(addr);
+      //Serial.printf("EEPROM read %d:%d=%d\n", i, addr, registerValues[i]);
     }
   }
   for (int i = 0; i < registerCount; i++) {

@@ -32,11 +32,10 @@ CycleRunner::CycleRunner(CycleEntry *cycleEntries) {
 }
 
 void CycleRunner::runCycle() {
-  unsigned long time = millis();
   byte i = 0;
   unsigned long min_to_wait = 10000;
   while (_cycleEntries[i].isNotLast()) {
-    unsigned long to_wait = _cycleEntries[i].handle(time);
+    unsigned long to_wait = _cycleEntries[i].handle(millis());
     if (to_wait == 0) {
       return;
     }

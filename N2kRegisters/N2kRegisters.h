@@ -24,6 +24,8 @@ protected:
   unsigned char registerCount = 0;
   unsigned char *registers;
   int32_t *registerValues;
+  int notSendCounter = 0;
+  int parseCounter = 0;
 
 public:
   tN2kRegisters(tNMEA2000 *N2K, unsigned char *registers, int32_t *initialValues) {
@@ -48,6 +50,10 @@ public:
   void sendN2kRegisterCommand(unsigned char command, unsigned char registerId, int32_t param=0);
   void parseN2kMessages();
 
+// raw access to registers
+  int getRegisterIndex(unsigned char registerId);
+  void setRegisterRawValue(int idx, int32_t value);
+
 // internal
   void handleN2kRegisterCommand(const tN2kMsg &N2kMsg);
   void handleGetRegister(unsigned char registerId, int idx);
@@ -59,7 +65,6 @@ public:
   virtual int32_t sensorValueForRegister(unsigned char registerId) { return 0; };
 
 // direct register array access
-  int getRegisterIndex(unsigned char registerId);
   int32_t getRegisterValue(unsigned char registerId);
   bool setRegisterValue(unsigned char registerId, int32_t value);
 

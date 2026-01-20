@@ -19,8 +19,8 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9000; // Unique, 21 bit resolution, max 2097151. Each device from same manufacturer should have unique number.
   const unsigned char N2K_DEVICE_FUNCTION = 155;
   const unsigned char N2K_DEVICE_CLASS = 40;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_RudderMaxPort, N2KREG_RudderMaxSter, N2KREG_RudderMsgFreq, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {80, 485, 1000};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_RudderMsgFreq, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {1000};
   #define OVER_handleRegisterChange
   #define OVER_sensorValueForReg
 #elif N2KNODE_DEVICE == N2KNODE_POWER_MONITOR
@@ -39,8 +39,8 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9002;
   const unsigned char N2K_DEVICE_FUNCTION = 140;
   const unsigned char N2K_DEVICE_CLASS = 50;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_GearForwardPos, N2KREG_GearIdlePos, N2KREG_GearReversePos, N2KREG_ThrottleMinPos, N2KREG_ThrottleMaxPos, N2KREG_EngineReportFreq, N2KREG_Gear, N2KREG_SetThrottle, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0, 0, 1500, 0, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_SteppersSpeed, N2KREG_ThrottleMaxPos, N2KREG_EngineReportFreq, N2KREG_Gear, N2KREG_SetThrottle, N2KREG_EngineModuleState, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {200, 2500, 4000, 0, 0, 0};
   #define OVER_handleRegisterChange
   #define OVER_sensorValueForReg
 #elif N2KNODE_DEVICE == N2KNODE_AUTOPILOT
@@ -49,18 +49,19 @@ const uint16_t N2K_DEVICE_REGISTRATION = 666; // Just choosen free from code lis
   const unsigned long N2K_DEVICE_SERIAL = 9003;
   const unsigned char N2K_DEVICE_FUNCTION = 150;
   const unsigned char N2K_DEVICE_CLASS = 40;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_AutopilotCalibrationP, N2KREG_AutopilotCalibrationI, N2KREG_AutopilotCalibrationD, N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {1000, 1000, 1000, 0, 0, 0, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_SetAutopilotState, N2KREG_SetAutopilotCourse, N2KREG_SetAutopilotTurnSpeed, N2KREG_SetAutopilotRudderPosition, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {0, 0, 0, 0};
   #define OVER_handleRegisterChange
   #define OVER_handleOtherN2kMsg
+  #define OVER_handleRegisterValueInfo
 #elif N2KNODE_DEVICE == N2KNODE_BMS
   // CANBed - Arduino CAN-Bus RP2040
   const char * N2K_DEVICE_NAME = "Wydra BMS";
   const unsigned long N2K_DEVICE_SERIAL = 9004;
   const unsigned char N2K_DEVICE_FUNCTION = 170;
   const unsigned char N2K_DEVICE_CLASS = 35;
-  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSAlertLowVoltage, N2KREG_BMSMsgFreq, N2KREG_BMSMode, N2KREG_BMSError, 0};
-  int32_t REGISTER_VALUES_ARRAY[] = {3600, 3370, 3225, 5000, 0, 0};
+  unsigned char REGISTERS_ARRAY[] = {N2KREG_BMSCutOffVoltage, N2KREG_BMSTurnOnVoltage, N2KREG_BMSAlertLowVoltage, N2KREG_BMSMsgFreq, N2KREG_BMSFactor0, N2KREG_BMSFactor1, N2KREG_BMSFactor2, N2KREG_BMSFactor3, N2KREG_BMSMode, N2KREG_BMSError, N2KREG_BMSRaw0, N2KREG_BMSRaw1, N2KREG_BMSRaw2, N2KREG_BMSRaw3, 0};
+  int32_t REGISTER_VALUES_ARRAY[] = {3600, 3370, 3225, 5000, 2000, 4000, 6000, 8000, 0, 0, 0, 0, 0, 0};
   #define OVER_handleRegisterChange
 #elif N2KNODE_DEVICE == N2KNODE_GYROWEATHER_SENSOR
   // Teensy 3.2
@@ -120,7 +121,7 @@ public:
 OverN2kRegisters N2kRegisters(&NMEA2000, REGISTERS_ARRAY, REGISTER_VALUES_ARRAY);
 
 void handleN2kMessage(const tN2kMsg &N2kMsg) {
-  // Serial.printf("N2kRegisters handleN2kMessage PGN=%d SOURCE=%d\n", N2kMsg.PGN, N2kMsg.Source);
+  //Serial.printf("handleN2kMessage PGN=%d SOURCE=%d\n", N2kMsg.PGN, N2kMsg.Source);
   N2kRegisters.handleN2kRegisterCommand(N2kMsg);
 }
 
@@ -140,6 +141,15 @@ void initRegisters() {
 }
 
 #ifdef ARDUINO_ARCH_RP2040
+void switchNMEAToSPI0(int rx, int tx, int sck, int cs) {
+  tNMEA2000_mcp* N2kMCP = (tNMEA2000_mcp*)&NMEA2000;
+  N2kMCP->SetSPI(&SPI);
+  SPI.setCS(cs);
+  SPI.setRX(rx);
+  SPI.setTX(tx);
+  SPI.setSCK(sck);
+}
+
 void switchNMEAToSPI1(int rx, int tx, int sck, int cs) {
   tNMEA2000_mcp* N2kMCP = (tNMEA2000_mcp*)&NMEA2000;
   N2kMCP->SetSPI(&SPI1);
