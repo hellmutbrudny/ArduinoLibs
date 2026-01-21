@@ -24,6 +24,8 @@
 
 // N2KNODE_ENGINE_DRIVER
 #define N2KREG_SteppersSpeed 10 // steps per second
+#define N2KREG_ThrottleResetTime 11
+#define N2KREG_GearResetTime 12
 #define N2KREG_ThrottleMaxPos 14 // set by N2KRC_SetRegisterWithCurrent
 #define N2KREG_EngineReportFreq 15 // ms
 #define N2KREG_Gear (128+16) // Reverse 5, Changing rev to idle 1, Idle 7, Changing fwd to idle 2, Forward 6 (read only)
