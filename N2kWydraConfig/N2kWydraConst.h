@@ -40,6 +40,21 @@
 // 20 - extending gear
 // 21 - retracting gear (read only)
 
+#define GEAR_LEFT 5
+#define GEAR_LEFT_CENTER 1 
+#define GEAR_CENTER 7
+#define GEAR_RIGHT_CENTER 2 
+#define GEAR_RIGHT 6
+
+#define STATE_READY 0
+#define STATE_THROTTLE_FAILED 1
+#define STATE_GEAR_FAILED 2
+#define STATE_ALTERNATOR_WAKING 5
+#define STATE_THROTTLE_EXTENDING 10
+#define STATE_THROTTLE_RETRACTING 11
+#define STATE_GEAR_EXTENDING 20
+#define STATE_GEAR_RETRACTING 21
+
 // N2KNODE_INDOOR_CONTROLLER
 // N2KNODE_OUTDOOR_CONTROLLER
 #define N2KREG_CtrlAutopilotStep 20 // 1-5
@@ -47,9 +62,20 @@
 
 // N2KNODE_AUTOPILOT
 #define N2KREG_SetAutopilotState (128+30) // 0-off, 1-on compass, 2-on wind, 3-stalled
-#define N2KREG_SetAutopilotTurnSpeed (128+31) // turnSpeed 0-default, 1-slow, 2-fast
+#define N2KREG_SetAutopilotRudderSpeed (128+31) // turnSpeed 0-default, 1-slow, 2-fast
 #define N2KREG_SetAutopilotRudderPosition (128+32) // rudder position to be set -100..0..100
 #define N2KREG_SetAutopilotCourse (128+33) // course:0..359
+#define N2KREG_SetAutopilotTurnSpeed (128+34) // as turnSpeed 0-default, 1-slow, 2-fast
+#define N2KREG_AutopilotShuntPower (128+35) // actual reading on the shunt
+
+#define AUTOPILOT_TURN_SPEED_SLOW 0
+#define AUTOPILOT_TURN_SPEED_NORMAL 1
+#define AUTOPILOT_TURN_SPEED_FAST 2
+
+#define AUTOPILOT_STATE_OFF 0
+#define AUTOPILOT_ON_COMPASS 1
+#define AUTOPILOT_ON_WIND 2
+#define AUTOPILOT_STALLED 3
 
 // N2KNODE_BMS
 #define N2KREG_BMSCutOffVoltage 40 // arg 1: (x1000)
