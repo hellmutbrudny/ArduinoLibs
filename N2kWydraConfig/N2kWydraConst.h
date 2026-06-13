@@ -39,11 +39,14 @@
 // 11 - retracting throttle
 // 20 - extending gear
 // 21 - retracting gear (read only)
+// 99 - initializing
+#define N2KREG_Throttle (128+19) // ABS value of current throttle
+
 
 #define GEAR_LEFT 5
-#define GEAR_LEFT_CENTER 1 
+#define GEAR_LEFT_CENTER 1
 #define GEAR_CENTER 7
-#define GEAR_RIGHT_CENTER 2 
+#define GEAR_RIGHT_CENTER 2
 #define GEAR_RIGHT 6
 
 #define STATE_READY 0
@@ -54,6 +57,7 @@
 #define STATE_THROTTLE_RETRACTING 11
 #define STATE_GEAR_EXTENDING 20
 #define STATE_GEAR_RETRACTING 21
+#define STATE_INITIALIZING 99
 
 // N2KNODE_INDOOR_CONTROLLER
 // N2KNODE_OUTDOOR_CONTROLLER
@@ -67,6 +71,7 @@
 #define N2KREG_SetAutopilotCourse (128+33) // course:0..359
 #define N2KREG_SetAutopilotTurnSpeed (128+34) // as turnSpeed 0-default, 1-slow, 2-fast
 #define N2KREG_AutopilotShuntPower (128+35) // actual reading on the shunt
+#define N2KREG_AutopilotMoveDirection (128+36) // actual reading on the shunt
 
 #define AUTOPILOT_TURN_SPEED_SLOW 0
 #define AUTOPILOT_TURN_SPEED_NORMAL 1
@@ -76,6 +81,7 @@
 #define AUTOPILOT_ON_COMPASS 1
 #define AUTOPILOT_ON_WIND 2
 #define AUTOPILOT_STALLED 3
+#define AUTOPILOT_UNKNOWN_RUDDER_POSITION 4
 
 // N2KNODE_BMS
 #define N2KREG_BMSCutOffVoltage 40 // arg 1: (x1000)
